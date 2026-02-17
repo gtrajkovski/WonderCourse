@@ -85,6 +85,10 @@ from src.api.content import content_bp, init_content_bp
 init_content_bp(project_store)
 app.register_blueprint(content_bp)
 
+from src.api.variants import variants_bp, init_variants_bp
+init_variants_bp(project_store)
+app.register_blueprint(variants_bp)
+
 from src.api.build_state import build_state_bp, init_build_state_bp
 init_build_state_bp(project_store)
 app.register_blueprint(build_state_bp)

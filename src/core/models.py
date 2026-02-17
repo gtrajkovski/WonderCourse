@@ -137,6 +137,27 @@ class TaxonomyType(str, Enum):
     CATEGORICAL = "categorical"  # Levels are independent categories (Fink)
 
 
+class VariantType(str, Enum):
+    """Content representation variants for UDL (Universal Design for Learning)."""
+
+    PRIMARY = "primary"           # Original/main content
+    AUDIO_ONLY = "audio_only"     # Audio version (video/reading → audio)
+    TRANSCRIPT = "transcript"      # Text transcript of video
+    ILLUSTRATED = "illustrated"    # Visual summary with illustrations
+    INFOGRAPHIC = "infographic"    # Infographic version of reading
+    GUIDED = "guided"             # Guided walkthrough (HOL)
+    CHALLENGE = "challenge"        # Challenge mode (minimal guidance)
+    SELF_CHECK = "self_check"      # Self-assessment version of quiz
+
+
+class DepthLevel(str, Enum):
+    """Content complexity depth levels."""
+
+    ESSENTIAL = "essential"   # Key points only, minimal examples
+    STANDARD = "standard"     # Full explanations, 2-3 examples (default)
+    ADVANCED = "advanced"     # Extended theory, edge cases, research links
+
+
 # ===========================
 # Dataclasses
 # ===========================
@@ -210,6 +231,82 @@ class CompletionCriteria:
 
         # Filter to only known fields
         known = {f.name for f in cls.__dataclass_fields__.values()}
+        filtered = {k: v for k, v in data.items() if k in known}
+
+        return cls(**filtered)
+
+
+@dataclass
+class ContentVariant:
+    """A content variant representing the same learning material in a different format.
+
+    ContentVariants enable Universal Design for Learning (UDL) by providing
+    multiple representations of the same activity content, and support depth
+    layers for different complexity levels.
+    """
+
+    id: str = field(default_factory=lambda: f"var_{uuid.uuid4().hex[:8]}")
+    variant_type: VariantType = VariantType.PRIMARY
+    depth_level: DepthLevel = DepthLevel.STANDARD
+
+    # Content storage (same pattern as Activity.content)
+    content: str = ""  # JSON serialized Pydantic schema
+    build_state: BuildState = BuildState.DRAFT
+
+    # Metadata
+    word_count: int = 0
+    estimated_duration_minutes: float = 0.0
+
+    # Generation tracking
+    generated_from_variant_id: Optional[str] = None  # Source variant if derived
+
+    # Timestamps
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize to dictionary."""
+        return {
+            "id": self.id,
+            "variant_type": self.variant_type.value if isinstance(self.variant_type, VariantType) else self.variant_type,
+            "depth_level": self.depth_level.value if isinstance(self.depth_level, DepthLevel) else self.depth_level,
+            "content": self.content,
+            "build_state": self.build_state.value if isinstance(self.build_state, BuildState) else self.build_state,
+            "word_count": self.word_count,
+            "estimated_duration_minutes": self.estimated_duration_minutes,
+            "generated_from_variant_id": self.generated_from_variant_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ContentVariant":
+        """Deserialize with schema evolution support."""
+        if data is None:
+            return cls()
+        data = dict(data)
+
+        # Deserialize enums
+        if "variant_type" in data and isinstance(data["variant_type"], str):
+            try:
+                data["variant_type"] = VariantType(data["variant_type"])
+            except ValueError:
+                data["variant_type"] = VariantType.PRIMARY
+
+        if "depth_level" in data and isinstance(data["depth_level"], str):
+            try:
+                data["depth_level"] = DepthLevel(data["depth_level"])
+            except ValueError:
+                data["depth_level"] = DepthLevel.STANDARD
+
+        if "build_state" in data and isinstance(data["build_state"], str):
+            try:
+                data["build_state"] = BuildState(data["build_state"])
+            except ValueError:
+                data["build_state"] = BuildState.DRAFT
+
+        # Filter to known fields
+        known = {f.name for f in fields(cls)}
         filtered = {k: v for k, v in data.items() if k in known}
 
         return cls(**filtered)
@@ -634,8 +731,50 @@ class Activity:
     developer_notes: List["DeveloperNote"] = field(default_factory=list)  # Internal author notes
     versions: List[Dict[str, Any]] = field(default_factory=list)  # Named version snapshots
     metadata: Dict[str, Any] = field(default_factory=dict)
+    # UDL content variants (empty = no variants, backward compatible)
+    content_variants: List[ContentVariant] = field(default_factory=list)
+    default_depth_level: Optional[DepthLevel] = None
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+    def get_variant(
+        self,
+        variant_type: VariantType = VariantType.PRIMARY,
+        depth_level: DepthLevel = DepthLevel.STANDARD
+    ) -> Optional[ContentVariant]:
+        """Get specific variant by type and depth.
+
+        For PRIMARY + STANDARD, returns a virtual ContentVariant wrapping
+        self.content for API consistency.
+        """
+        # Primary + Standard is stored in main content field
+        if variant_type == VariantType.PRIMARY and depth_level == DepthLevel.STANDARD:
+            return ContentVariant(
+                id=f"{self.id}_primary_standard",
+                variant_type=VariantType.PRIMARY,
+                depth_level=DepthLevel.STANDARD,
+                content=self.content,
+                build_state=self.build_state,
+                word_count=self.word_count,
+                estimated_duration_minutes=self.estimated_duration_minutes,
+            )
+
+        # Search content_variants
+        for variant in self.content_variants:
+            if variant.variant_type == variant_type and variant.depth_level == depth_level:
+                return variant
+        return None
+
+    def get_available_variants(self) -> List[tuple]:
+        """List all variants and their generation status.
+
+        Returns:
+            List of (variant_type, depth_level, build_state) tuples.
+        """
+        result = [(VariantType.PRIMARY, DepthLevel.STANDARD, self.build_state)]
+        for variant in self.content_variants:
+            result.append((variant.variant_type, variant.depth_level, variant.build_state))
+        return result
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize to dictionary with enum values as strings."""
@@ -657,6 +796,8 @@ class Activity:
             "developer_notes": [note.to_dict() for note in self.developer_notes],
             "versions": self.versions,
             "metadata": self.metadata,
+            "content_variants": [v.to_dict() for v in self.content_variants],
+            "default_depth_level": self.default_depth_level.value if self.default_depth_level else None,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -707,8 +848,17 @@ class Activity:
             if isinstance(data["completion_criteria"], dict):
                 data["completion_criteria"] = CompletionCriteria.from_dict(data["completion_criteria"])
 
-        # Pop and deserialize developer_notes
+        # Deserialize default_depth_level if present
+        if "default_depth_level" in data and data["default_depth_level"] is not None:
+            if isinstance(data["default_depth_level"], str):
+                try:
+                    data["default_depth_level"] = DepthLevel(data["default_depth_level"])
+                except ValueError:
+                    data["default_depth_level"] = None
+
+        # Pop and deserialize developer_notes and content_variants
         developer_notes_data = data.pop("developer_notes", [])
+        content_variants_data = data.pop("content_variants", [])
 
         # Filter to only known fields for schema evolution
         known = {f.name for f in cls.__dataclass_fields__.values()}
@@ -716,6 +866,7 @@ class Activity:
 
         activity = cls(**filtered)
         activity.developer_notes = [DeveloperNote.from_dict(n) for n in developer_notes_data]
+        activity.content_variants = [ContentVariant.from_dict(v) for v in content_variants_data]
 
         return activity
 

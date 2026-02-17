@@ -107,6 +107,20 @@ Avoid AI-sounding patterns:
 
 Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`. App runs without key but AI features are disabled.
 
+## v2.0 Features (In Progress)
+
+**Content Variants & Depth Layers (Phase 1):**
+- `VariantType` enum: PRIMARY, TRANSCRIPT, AUDIO_ONLY, ILLUSTRATED, INFOGRAPHIC, GUIDED, CHALLENGE, SELF_CHECK
+- `DepthLevel` enum: ESSENTIAL (key points), STANDARD (full), ADVANCED (extended)
+- `ContentVariant` dataclass stores variant content with generation tracking
+- `Activity.content_variants` list for UDL alternatives (lazy populated)
+- Variant API: `/api/courses/<id>/activities/<id>/variants`
+- `TranscriptVariantGenerator` transforms video scripts to transcripts
+
+## Environment Setup
+
+Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`. App runs without key but AI features are disabled.
+
 ## Project Status
 
-v1.1 complete. Planning docs in `.planning/` (PROJECT.md, ROADMAP.md). Archives in `.planning/milestones/`.
+v2.0-dev (Phase 1 Foundation in progress). Planning docs in `.planning/` (PROJECT.md, ROADMAP.md, v2.0-IDEAS.md).
