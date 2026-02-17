@@ -1,85 +1,94 @@
-# Course Builder Studio
+# WonderCourse
 
 ## Current State
 
-**Version:** v1.0 (shipped 2026-02-12)
+**Version:** v2.0-dev (forked from Course Builder Studio v1.3.1)
 
-Course Builder Studio v1.0 is complete. The platform generates complete Coursera short courses from high-level blueprints with:
+WonderCourse is the v2.0 evolution of Course Builder Studio, focusing on **adaptive learning** and **content intelligence**. The platform generates complete online courses with:
 
-- 11 content generators covering all activity types
-- AI-powered blueprint generation
+- 15 content generators covering all activity types
+- AI-powered blueprint generation with auto-fix
 - Interactive AI coach with Socratic tutoring
 - Multi-user collaboration with role-based permissions
+- Learner profiles for audience-aware content
+- Bloom's taxonomy validation and analysis
 - Export to instructor packages, LMS manifests, SCORM, and DOCX
-- Full dark theme UI with onboarding and help system
+- Full dark theme UI with progress dashboard
 
-**Milestone Archives:** `.planning/milestones/`
+**Foundation:** Course Builder Studio v1.3.1 (all Coursera v3.0 compliance complete)
 
 ## What This Is
 
-An AI-powered course development platform that handles the entire Coursera short course creation workflow: Plan (blueprint, outcomes, pacing) -> Build (11 content types including video scripts, readings, HOL activities, coach dialogues, quizzes, labs, textbook) -> Publish (instructor packages, LMS export). A standalone Flask app with proven patterns from ScreenCast Studio as its foundation.
+An AI-powered adaptive learning platform that creates courses tailored to different learners. Beyond content generation, WonderCourse will offer:
 
-## Core Value
+- **UDL Menus**: Multiple content representations (video, audio, text, visual)
+- **Depth Layers**: Essential/Standard/Advanced content variants
+- **Inquiry Arcs**: Question-driven learning paths
+- **Adaptive Progression**: Mastery-based advancement with remediation
 
-Generate all content types for a complete Coursera short course from a high-level blueprint, with AI-powered generation, structural validation, and export-ready packaging.
+## v2.0 Goals
 
-## v1.0 Validated Requirements
+See `.planning/v2.0-IDEAS.md` for the complete roadmap.
 
-All 90 requirements shipped and validated:
+### Phase 1: Foundation
+- [ ] Carry forward v1.x backlog (duration config, custom presets)
+- [ ] Content variant data model
+- [ ] Depth layer infrastructure
 
-- **Infrastructure (4):** Disk persistence, path safety, Claude API, Flask app
-- **Course Management (12):** CRUD, modules/lessons/activities, outcomes, WWHAA phases
-- **Content Generation (13):** 11 generators + regeneration + inline editing
-- **Quality & Validation (7):** Coursera validation, outcome alignment, Bloom's distribution, distractor analysis
-- **Export & Publishing (5):** Instructor ZIP, LMS manifest, DOCX, SCORM, preview
-- **Authentication (7):** Registration, login, sessions, isolation, profiles, password reset
-- **Collaboration (5):** Invitations, roles, commenting, audit trail, activity feed
-- **UI Pages (8):** Dashboard, planner, builder, studio, textbook, publish, dark theme, navigation
-- **AI Inline Editing (8):** Suggestions, autocomplete, tone/clarity, Bloom's warnings, rewrite, undo/redo
-- **Interactive Coach (8):** Chat interface, guardrails, Socratic method, evaluation, transcripts
-- **Content Import (7):** Paste/upload, format parsing, AI analysis, conversion
+### Phase 2: UDL Implementation
+- [ ] Variant generators (audio, transcript, infographic)
+- [ ] UDL mode UI
+- [ ] Learner preference storage
 
-## Next Milestone Goals
+### Phase 3: Depth Layers
+- [ ] Multi-depth generation
+- [ ] Depth switching UI
+- [ ] Profile-based defaults
 
-*(To be defined with `/gsd:new-milestone`)*
+### Phase 4: Inquiry Arcs
+- [ ] Arc data model
+- [ ] Arc-aware blueprint generator
+- [ ] Question-based navigation
 
-Potential v1.1 scope:
-- Intelligence Suite (UDL menus, depth layers, inquiry arcs)
-- Performance optimizations
-- Additional export formats
+### Phase 5: AI Media Integration
+- [ ] Image generation service integration (DALL-E, Midjourney)
+- [ ] Video generation exploration
+- [ ] Interactive simulation framework
+
+### Phase 6: Review & Collaboration
+- [ ] SME review workflow
+- [ ] Version comparison
+- [ ] Team templates
 
 ## Constraints
 
 - **Tech stack**: Python + Flask + Jinja2 + vanilla JS
-- **AI provider**: Anthropic Claude API only
+- **AI provider**: Anthropic Claude API (primary), OpenAI for images
 - **Port**: 5003
 - **Persistence**: Disk-based JSON per project
 
 ## Key Decisions
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| Separate repo from ScreenCast Studio | Clean separation, independent planning | Shipped v1.0 |
-| Copy code from ScreenCast Studio | Proven patterns as foundation | Shipped v1.0 |
-| Jinja + vanilla JS frontend | Faster to build, React migration later | Shipped v1.0 |
-| Claude API only | Simplicity, no abstraction layer | Shipped v1.0 |
-| Full system scope | All content types + exports + QA in v1 | Shipped v1.0 |
-| course_data.json per project | Parallel to ScreenCast Studio pattern | Shipped v1.0 |
+| Decision | Rationale | Status |
+|----------|-----------|--------|
+| Fork from Course Builder Studio | Solid v1.3.1 foundation with all compliance | Done |
+| Keep Flask + vanilla JS | Avoid rewrite, focus on features | Active |
+| UDL-first approach | Accessibility and learner choice as core value | Planned |
+| Depth layers over branching | Simpler model, same content structure | Planned |
 
-<details>
-<summary>Original Context (v1.0 planning)</summary>
+## v1.x Foundation (Inherited)
 
-Course Builder Studio was born from ScreenCast Studio (C:\ScreencastHelper), a screencast production tool with mature patterns for AI-powered content generation. Key code copied as starting point:
+All 90+ requirements from Course Builder Studio:
 
-- `src/core/models.py` -- Dataclasses with to_dict/from_dict serialization
-- `src/core/store.py` -- ProjectStore disk persistence pattern
-- `src/ai/client.py` -- Conversational AI client
-- `src/utils/ai_client.py` -- One-shot AI client
-- `src/config.py` -- Configuration constants pattern
-
-The target is Coursera short courses (30-180 minutes, 2-3 modules, 1-3 learning outcomes). Content follows WWHAA instructional design and Bloom's taxonomy.
-
-</details>
+- **Infrastructure**: Disk persistence, path safety, Claude API, Flask app
+- **Course Management**: CRUD, modules/lessons/activities, outcomes, WWHAA phases
+- **Content Generation**: 15 generators + regeneration + inline editing
+- **Quality & Validation**: Coursera validation, outcome alignment, Bloom's analysis
+- **Export & Publishing**: Instructor ZIP, LMS manifest, DOCX, SCORM, preview
+- **Authentication**: Registration, login, sessions, isolation, profiles
+- **Collaboration**: Invitations, roles, commenting, audit trail
+- **v1.1 Expansion**: Standards engine, flow control, course pages, audit system, humanization, developer notes, video studio, progress dashboard
+- **v1.2-v1.3**: Coursera v3.0 compliance (CTA validation, quiz distribution, AI detection, image generators)
 
 ---
-*Last updated: 2026-02-12 — v1.0 milestone complete*
+*Created: 2026-02-17 — WonderCourse v2.0 development begins*

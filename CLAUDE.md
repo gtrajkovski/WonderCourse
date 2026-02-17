@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Course Builder Studio is an AI-powered platform for generating complete Coursera short courses from high-level blueprints. It generates 12 content types (video scripts, readings, quizzes, HOL activities, coach dialogues, labs, discussions, assignments, projects, rubrics, practice quizzes, screencast simulations) with structural validation and export-ready packaging. Standalone Flask app, single-user localhost tool.
+WonderCourse is an AI-powered adaptive learning platform (v2.0 evolution of Course Builder Studio). It generates complete online courses with 12+ content types, featuring:
+- **Intelligence Suite**: UDL menus, depth layers, inquiry arcs
+- **Adaptive Learning**: prerequisite assessment, mastery-based progression
+- **AI Media Integration**: image/video generation
+- Structural validation and export-ready packaging
+
+Standalone Flask app, single-user localhost tool. See `.planning/v2.0-IDEAS.md` for the full roadmap.
 
 ## Commands
 
