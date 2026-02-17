@@ -1,0 +1,107 @@
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    {% if course %}
+    <a href="/courses/{{ course.id }}/planner" class="sidebar-title-link">
+      <h2 class="sidebar-title">{{ course.title }}</h2>
+    </a>
+    {% else %}
+    <h2 class="sidebar-title" data-i18n="sidebar.selectCourse">Select a Course</h2>
+    {% endif %}
+  </div>
+
+  <nav class="sidebar-nav" aria-label="Main navigation">
+    <a href="/dashboard" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+      <span class="nav-icon">&#127968;</span>
+      <span class="nav-text" data-i18n="nav.dashboard">Dashboard</span>
+    </a>
+
+    {% if course %}
+    <a href="/courses/{{ course.id }}/planner" class="nav-item {% if active_page == 'planner' %}active{% endif %}">
+      <span class="nav-icon">&#128203;</span>
+      <span class="nav-text" data-i18n="nav.planner">Planner</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/builder" class="nav-item {% if active_page == 'builder' %}active{% endif %}">
+      <span class="nav-icon">&#127795;</span>
+      <span class="nav-text" data-i18n="nav.builder">Builder</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/studio" class="nav-item {% if active_page == 'studio' %}active{% endif %}">
+      <span class="nav-icon">&#10024;</span>
+      <span class="nav-text" data-i18n="nav.studio">Studio</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/textbook" class="nav-item {% if active_page == 'textbook' %}active{% endif %}">
+      <span class="nav-icon">&#128218;</span>
+      <span class="nav-text" data-i18n="nav.textbook">Textbook</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/pages" class="nav-item {% if active_page == 'pages' %}active{% endif %}">
+      <span class="nav-icon">&#128196;</span>
+      <span class="nav-text" data-i18n="nav.pages">Pages</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/audit" class="nav-item {% if active_page == 'audit' %}active{% endif %}">
+      <span class="nav-icon">&#128269;</span>
+      <span class="nav-text" data-i18n="nav.audit">Audit</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/progress" class="nav-item {% if active_page == 'progress' %}active{% endif %}">
+      <span class="nav-icon">&#128200;</span>
+      <span class="nav-text" data-i18n="nav.progress">Progress</span>
+    </a>
+
+    <a href="/courses/{{ course.id }}/publish" class="nav-item {% if active_page == 'publish' %}active{% endif %}">
+      <span class="nav-icon">&#11015;</span>
+      <span class="nav-text" data-i18n="nav.publish">Publish</span>
+    </a>
+    {% else %}
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#128203;</span>
+      <span class="nav-text" data-i18n="nav.planner">Planner</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#127795;</span>
+      <span class="nav-text" data-i18n="nav.builder">Builder</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#10024;</span>
+      <span class="nav-text" data-i18n="nav.studio">Studio</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#128218;</span>
+      <span class="nav-text" data-i18n="nav.textbook">Textbook</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#128196;</span>
+      <span class="nav-text" data-i18n="nav.pages">Pages</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#128269;</span>
+      <span class="nav-text" data-i18n="nav.audit">Audit</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#128200;</span>
+      <span class="nav-text" data-i18n="nav.progress">Progress</span>
+    </a>
+
+    <a href="#" class="nav-item disabled" aria-disabled="true">
+      <span class="nav-icon">&#11015;</span>
+      <span class="nav-text" data-i18n="nav.publish">Publish</span>
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    <button id="sidebar-toggle" type="button" aria-label="Toggle sidebar">
+      <span class="toggle-icon">&#9664;</span>
+      <span class="toggle-text" data-i18n="sidebar.collapse">Collapse</span>
+    </button>
+  </div>
+</aside>

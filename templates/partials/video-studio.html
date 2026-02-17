@@ -1,0 +1,119 @@
+<!-- Video Studio Modal -->
+<div id="video-studio-modal" class="modal modal-fullscreen" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="video-studio">
+            <!-- Header -->
+            <div class="video-studio-header">
+                <div class="header-left">
+                    <h2 id="video-studio-title" data-i18n="videoStudio.title">Video Studio</h2>
+                    <span class="video-studio-subtitle" id="video-studio-subtitle"></span>
+                </div>
+                <div class="studio-controls">
+                    <button class="btn btn-icon" id="btn-toggle-notes" data-i18n-title="videoStudio.toggleNotes" title="Toggle speaker notes (N)">
+                        <span class="btn-icon-text" data-i18n="videoStudio.notes">Notes</span>
+                    </button>
+                    <button class="btn btn-icon" id="btn-fullscreen" data-i18n-title="videoStudio.fullscreen" title="Toggle fullscreen (F)">
+                        <span class="btn-icon-text" data-i18n="videoStudio.fullscreen">Fullscreen</span>
+                    </button>
+                    <button class="btn btn-secondary" data-modal-close data-i18n="videoStudio.exit">Exit</button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="video-studio-body">
+                <!-- Timing Sidebar -->
+                <div class="timing-sidebar" id="timing-sidebar">
+                    <div class="timing-header">
+                        <h3 data-i18n="videoStudio.timing">Timing</h3>
+                        <div class="total-duration">
+                            <span class="elapsed-time" id="studio-elapsed-time">0:00</span>
+                            <span class="duration-separator">/</span>
+                            <span class="total-time" id="studio-total-time">0:00</span>
+                        </div>
+                    </div>
+                    <div class="timing-progress">
+                        <div class="timing-progress-bar" id="timing-progress-bar"></div>
+                    </div>
+                    <div class="section-timing-list" id="section-timing-list">
+                        <!-- Section timing items rendered dynamically -->
+                    </div>
+                    <div class="timing-legend">
+                        <p class="text-muted" data-i18n="videoStudio.speakingRate">Based on 150 WPM speaking rate</p>
+                    </div>
+                </div>
+
+                <!-- Teleprompter -->
+                <div class="teleprompter-container" id="teleprompter-container">
+                    <div class="teleprompter-reading-line"></div>
+                    <div class="teleprompter-content" id="teleprompter-content">
+                        <!-- Script sections rendered dynamically -->
+                    </div>
+
+                    <!-- Speaker Notes Overlay -->
+                    <div class="speaker-notes-overlay" id="speaker-notes-overlay">
+                        <div class="notes-overlay-header">
+                            <span data-i18n="videoStudio.speakerNotes">Speaker Notes</span>
+                            <button class="btn-close-notes" id="btn-close-notes" title="Close notes">&times;</button>
+                        </div>
+                        <div class="notes-overlay-content" id="current-speaker-notes" data-i18n="videoStudio.selectSectionNotes">
+                            Select a section to view speaker notes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="video-studio-footer">
+                <div class="playback-controls">
+                    <button class="btn btn-icon" id="btn-rewind" data-i18n-title="videoStudio.restart" title="Restart">
+                        <span class="playback-icon">⏮</span>
+                    </button>
+                    <button class="btn btn-primary btn-large btn-play" id="btn-play-pause" data-i18n-title="videoStudio.playPause" title="Play/Pause (Space)">
+                        <span class="play-icon">▶</span>
+                        <span class="pause-icon" style="display: none;">⏸</span>
+                    </button>
+                    <button class="btn btn-icon" id="btn-stop" data-i18n-title="videoStudio.stop" title="Stop">
+                        <span class="playback-icon">⏹</span>
+                    </button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="scroll-speed" data-i18n="videoStudio.speed">Speed:</label>
+                    <button class="btn btn-small" id="btn-speed-down" data-i18n-title="videoStudio.slower" title="Slower">-</button>
+                    <input type="range" id="scroll-speed" min="0.5" max="2" step="0.1" value="1">
+                    <button class="btn btn-small" id="btn-speed-up" data-i18n-title="videoStudio.faster" title="Faster">+</button>
+                    <span class="speed-value" id="speed-value">1.0x</span>
+                </div>
+
+                <div class="section-nav">
+                    <button class="btn btn-secondary" id="btn-prev-section" data-i18n-title="videoStudio.previousSection" title="Previous section (Left Arrow)">
+                        <span>&larr;</span> <span data-i18n="videoStudio.prev">Prev</span>
+                    </button>
+                    <span class="current-section-label" id="current-section-label">Hook</span>
+                    <button class="btn btn-secondary" id="btn-next-section" data-i18n-title="videoStudio.nextSection" title="Next section (Right Arrow)">
+                        <span data-i18n="videoStudio.next">Next</span> <span>&rarr;</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Keyboard Shortcuts Help -->
+            <div class="shortcuts-help" id="shortcuts-help">
+                <div class="shortcuts-toggle" id="shortcuts-toggle" data-i18n-title="videoStudio.keyboardShortcuts" title="Keyboard shortcuts">?</div>
+                <div class="shortcuts-panel" id="shortcuts-panel" style="display: none;">
+                    <h4 data-i18n="videoStudio.keyboardShortcuts">Keyboard Shortcuts</h4>
+                    <ul>
+                        <li><kbd>Space</kbd> <span data-i18n="videoStudio.playPause">Play / Pause</span></li>
+                        <li><kbd>&larr;</kbd> <span data-i18n="videoStudio.previousSection">Previous section</span></li>
+                        <li><kbd>&rarr;</kbd> <span data-i18n="videoStudio.nextSection">Next section</span></li>
+                        <li><kbd>&uarr;</kbd> <span data-i18n="videoStudio.speedUp">Speed up</span></li>
+                        <li><kbd>&darr;</kbd> <span data-i18n="videoStudio.speedDown">Speed down</span></li>
+                        <li><kbd>N</kbd> <span data-i18n="videoStudio.toggleNotes">Toggle notes</span></li>
+                        <li><kbd>F</kbd> <span data-i18n="videoStudio.fullscreen">Fullscreen</span></li>
+                        <li><kbd>Esc</kbd> <span data-i18n="videoStudio.exitShortcut">Exit</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

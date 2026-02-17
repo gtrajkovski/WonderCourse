@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Audit - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/audit.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="audit-container" data-course-id="{{ course.id }}">
+    <div class="audit-header">
+        <div class="audit-header-content">
+            <h2 data-i18n="audit.courseAudit">Course Audit</h2>
+            <p class="audit-subtitle" data-i18n="audit.subtitle">Check course quality and identify issues before publishing</p>
+        </div>
+        <div class="audit-actions">
+            <button class="btn btn-primary btn-large" id="btn-run-audit" data-i18n="audit.runFullAudit">Run Full Audit</button>
+        </div>
+    </div>
+
+    <!-- Score Card -->
+    <div class="score-card" id="score-card" style="display: none;">
+        <div class="score-circle">
+            <span class="score-value" id="score-value">--</span>
+            <span class="score-label" data-i18n="audit.scoreLabel">Score</span>
+        </div>
+        <div class="score-breakdown">
+            <div class="score-stat stat-error">
+                <span class="stat-count" id="error-count">0</span>
+                <span class="stat-label" data-i18n="audit.errors">Errors</span>
+            </div>
+            <div class="score-stat stat-warning">
+                <span class="stat-count" id="warning-count">0</span>
+                <span class="stat-label" data-i18n="audit.warnings">Warnings</span>
+            </div>
+            <div class="score-stat stat-info">
+                <span class="stat-count" id="info-count">0</span>
+                <span class="stat-label" data-i18n="audit.info">Info</span>
+            </div>
+        </div>
+        <div class="score-meta">
+            <span id="audit-timestamp" data-i18n="audit.lastRunNever">Last run: Never</span>
+        </div>
+    </div>
+
+    <!-- No Audit State -->
+    <div class="no-audit" id="no-audit">
+        <div class="no-audit-icon">&#128269;</div>
+        <h3 data-i18n="audit.noResults">No Audit Results</h3>
+        <p data-i18n="audit.runToCheck">Run an audit to check your course for issues.</p>
+        <button class="btn btn-primary" id="btn-run-audit-empty" data-i18n="audit.runAudit">Run Audit</button>
+    </div>
+
+    <!-- Issues List -->
+    <div class="issues-section" id="issues-section" style="display: none;">
+        <div class="issues-header">
+            <h3 data-i18n="audit.issuesFound">Issues Found</h3>
+            <div class="issues-filter">
+                <label>
+                    <input type="checkbox" id="filter-errors" checked> <span data-i18n="audit.errors">Errors</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-warnings" checked> <span data-i18n="audit.warnings">Warnings</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-info" checked> <span data-i18n="audit.info">Info</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-resolved"> <span data-i18n="audit.showResolved">Show Resolved</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="issues-list" id="issues-list">
+            <!-- Issues rendered by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Check Types Section -->
+    <div class="checks-section">
+        <h3 data-i18n="audit.availableChecks">Available Checks</h3>
+        <div class="checks-grid" id="checks-grid">
+            <div class="check-card" data-check="flow_analysis">
+                <span class="check-icon">&#128256;</span>
+                <h4 data-i18n="audit.flowAnalysis">Flow Analysis</h4>
+                <p data-i18n="audit.flowAnalysisDesc">Logical progression through modules and lessons</p>
+                <button class="btn btn-ghost btn-small btn-run-check" data-check="flow_analysis" data-i18n="audit.runCheck">Run Check</button>
+            </div>
+            <div class="check-card" data-check="repetition">
+                <span class="check-icon">&#128257;</span>
+                <h4 data-i18n="audit.repetitionDetection">Repetition Detection</h4>
+                <p data-i18n="audit.repetitionDesc">Find duplicate or similar content</p>
+                <button class="btn btn-ghost btn-small btn-run-check" data-check="repetition" data-i18n="audit.runCheck">Run Check</button>
+            </div>
+            <div class="check-card" data-check="objective_alignment">
+                <span class="check-icon">&#127919;</span>
+                <h4 data-i18n="audit.objectiveAlignment">Objective Alignment</h4>
+                <p data-i18n="audit.objectiveAlignmentDesc">Activities mapped to learning outcomes</p>
+                <button class="btn btn-ghost btn-small btn-run-check" data-check="objective_alignment" data-i18n="audit.runCheck">Run Check</button>
+            </div>
+            <div class="check-card" data-check="content_gaps">
+                <span class="check-icon">&#128203;</span>
+                <h4 data-i18n="audit.contentGaps">Content Gaps</h4>
+                <p data-i18n="audit.contentGapsDesc">Missing required content elements</p>
+                <button class="btn btn-ghost btn-small btn-run-check" data-check="content_gaps" data-i18n="audit.runCheck">Run Check</button>
+            </div>
+            <div class="check-card" data-check="duration_balance">
+                <span class="check-icon">&#9201;</span>
+                <h4 data-i18n="audit.durationBalance">Duration Balance</h4>
+                <p data-i18n="audit.durationBalanceDesc">Time distribution across modules</p>
+                <button class="btn btn-ghost btn-small btn-run-check" data-check="duration_balance" data-i18n="audit.runCheck">Run Check</button>
+            </div>
+            <div class="check-card" data-check="bloom_progression">
+                <span class="check-icon">&#128200;</span>
+                <h4 data-i18n="audit.bloomProgression">Bloom Progression</h4>
+                <p data-i18n="audit.bloomProgressionDesc">Cognitive level advancement</p>
+                <button class="btn btn-ghost btn-small btn-run-check" data-check="bloom_progression" data-i18n="audit.runCheck">Run Check</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Issue Detail Modal -->
+<div id="issue-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="issue-modal-title" data-i18n="audit.issueDetails">Issue Details</h2>
+            <span class="issue-severity-badge" id="issue-modal-severity">Warning</span>
+        </div>
+        <div class="modal-body">
+            <p class="issue-description" id="issue-modal-description"></p>
+
+            <div class="issue-section">
+                <h4 data-i18n="audit.affectedElements">Affected Elements</h4>
+                <ul class="affected-list" id="issue-modal-affected"></ul>
+            </div>
+
+            <div class="issue-section">
+                <h4 data-i18n="audit.suggestedFix">Suggested Fix</h4>
+                <p id="issue-modal-fix"></p>
+            </div>
+
+            <div class="issue-section">
+                <h4 data-i18n="audit.status">Status</h4>
+                <select id="issue-modal-status" class="form-select">
+                    <option value="open" data-i18n="audit.statusOpen">Open</option>
+                    <option value="in_progress" data-i18n="audit.statusInProgress">In Progress</option>
+                    <option value="resolved" data-i18n="audit.statusResolved">Resolved</option>
+                    <option value="wont_fix" data-i18n="audit.statusWontFix">Won't Fix</option>
+                    <option value="false_positive" data-i18n="audit.statusFalsePositive">False Positive</option>
+                </select>
+            </div>
+
+            <div class="issue-section">
+                <h4 data-i18n="audit.resolutionNotes">Resolution Notes</h4>
+                <textarea id="issue-modal-notes" class="form-textarea" rows="3" data-i18n-placeholder="audit.resolutionPlaceholder" placeholder="Add notes about how this was resolved..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.close">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-save-issue" data-i18n="audit.saveChanges">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Audit Running Modal -->
+<div id="audit-running-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-small">
+        <div class="modal-body audit-running">
+            <div class="audit-spinner"></div>
+            <p id="audit-running-message" data-i18n="audit.auditInProgress">Running audit...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/audit.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseId = '{{ course.id }}';
+        window.auditController = new AuditController(courseId);
+        window.auditController.init();
+    });
+</script>
+{% endblock %}

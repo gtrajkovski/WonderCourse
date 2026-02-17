@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/auth.css') }}">
+{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block body_layout %}
+<main class="main-content standalone">
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Course Builder Studio</h1>
+      <p data-i18n="auth.loginTitle">Log in to your account</p>
+    </div>
+
+    <form class="auth-form" id="login-form" novalidate>
+      <div class="auth-form-error" id="form-error"></div>
+      <div class="auth-form-success" id="form-success"></div>
+
+      <div class="form-group" data-field="email">
+        <label class="form-label required" for="email" data-i18n="auth.email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-input"
+          data-i18n-placeholder="auth.emailPlaceholder"
+          placeholder="you@example.com"
+          required
+          autofocus
+        >
+        <span class="form-error" data-error="email"></span>
+      </div>
+
+      <div class="form-group" data-field="password">
+        <label class="form-label required" for="password" data-i18n="auth.password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-input"
+          data-i18n-placeholder="auth.passwordPlaceholder"
+          placeholder="Enter your password"
+          required
+        >
+        <span class="form-error" data-error="password"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="submit-btn" data-i18n="auth.login">
+        Log In
+      </button>
+    </form>
+
+    <div class="auth-links">
+      <p><a href="/forgot-password" data-i18n="auth.forgotPassword">Forgot your password?</a></p>
+      <p><span data-i18n="auth.noAccount">Don't have an account?</span> <a href="/register" data-i18n="auth.signUp">Sign up</a></p>
+    </div>
+  </div>
+</div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/pages/auth.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new LoginForm('login-form');
+
+    // Check for success message from registration
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registered') === 'true') {
+      const successEl = document.getElementById('form-success');
+      successEl.textContent = 'Account created successfully. Please log in.';
+      successEl.classList.add('visible');
+    }
+  });
+</script>
+{% endblock %}

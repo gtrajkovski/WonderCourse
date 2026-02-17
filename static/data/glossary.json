@@ -1,0 +1,181 @@
+{
+  "terms": [
+    {
+      "term": "WWHAA",
+      "definition": "A video script structure framework: What (introduce concept), Why (explain importance), How (demonstrate process), Apply (show practical application), Action (call to action). Used to create engaging, pedagogically sound video content.",
+      "examples": [
+        "What: 'Today we'll learn about functions in Python'",
+        "Why: 'Functions help you write reusable, organized code'",
+        "How: 'Let's define a function using the def keyword'",
+        "Apply: 'Here's how to use functions to calculate loan payments'",
+        "Action: 'Try creating your own function in the next exercise'"
+      ],
+      "related": ["Video Script", "Hook", "Instructional Design"]
+    },
+    {
+      "term": "Bloom's Taxonomy",
+      "definition": "A hierarchical framework for categorizing educational learning objectives by cognitive complexity. Levels from lowest to highest: Remember, Understand, Apply, Analyze, Evaluate, Create. Used to ensure appropriate cognitive progression in course design.",
+      "examples": [
+        "Remember: 'List the three branches of government'",
+        "Understand: 'Explain the purpose of checks and balances'",
+        "Apply: 'Use the Constitution to evaluate a policy'",
+        "Analyze: 'Compare parliamentary and presidential systems'",
+        "Evaluate: 'Judge which system better protects civil liberties'",
+        "Create: 'Design a new governance structure for a community'"
+      ],
+      "related": ["Learning Outcome", "Cognitive Load", "Scaffolding"]
+    },
+    {
+      "term": "Learning Outcome",
+      "definition": "A specific, measurable statement describing what learners should be able to do after completing instruction. Written in ABCD format: Audience, Behavior, Condition, Degree. Forms the foundation for course design and assessment.",
+      "examples": [
+        "By the end of this module, students will be able to write a Python function that takes two arguments and returns their sum.",
+        "Given a dataset, learners can create a histogram using matplotlib with 90% accuracy."
+      ],
+      "related": ["ABCD Format", "Bloom's Taxonomy", "Assessment"]
+    },
+    {
+      "term": "SCORM",
+      "definition": "Sharable Content Object Reference Model. A set of technical standards for e-learning software that enables content portability and tracking across different Learning Management Systems (LMS). Ensures courses can be deployed anywhere.",
+      "examples": [
+        "Export course as SCORM 1.2 for compatibility with older LMS platforms",
+        "SCORM package includes manifest.xml with course metadata"
+      ],
+      "related": ["LMS", "Export", "Module"]
+    },
+    {
+      "term": "IVQ",
+      "definition": "In-Video Quiz. An interactive assessment embedded within video content that pauses playback to present questions. Increases engagement and checks comprehension in real-time during video lessons.",
+      "examples": [
+        "At 2:30 in the video, an IVQ asks students to identify the correct syntax",
+        "IVQ with 3 multiple-choice questions appears after key concept introduction"
+      ],
+      "related": ["Video Script", "Formative Assessment", "Activity"]
+    },
+    {
+      "term": "Rubric",
+      "definition": "A scoring guide that defines evaluation criteria and performance levels for assignments. Typically includes dimensions (criteria), levels (performance standards), and descriptors. Ensures consistent, transparent grading.",
+      "examples": [
+        "A 4-level rubric for essays: Excellent, Good, Satisfactory, Needs Improvement",
+        "Dimensions include: Clarity, Evidence, Organization, Grammar"
+      ],
+      "related": ["Assessment", "Summative Assessment", "Assignment"]
+    },
+    {
+      "term": "Formative Assessment",
+      "definition": "Low-stakes evaluation conducted during the learning process to monitor student progress and provide feedback. Used to adjust instruction and help learners improve. Examples include practice quizzes, discussions, peer reviews.",
+      "examples": [
+        "Practice quiz after each module with instant feedback",
+        "Discussion forum where students explain concepts to peers",
+        "Self-check questions throughout a reading"
+      ],
+      "related": ["Summative Assessment", "Practice Quiz", "Discussion"]
+    },
+    {
+      "term": "Summative Assessment",
+      "definition": "High-stakes evaluation conducted at the end of instruction to measure learning achievement against outcomes. Used for grading and certification. Examples include final exams, capstone projects, graded assignments.",
+      "examples": [
+        "Final exam covering all course modules",
+        "Capstone project requiring application of all learned skills",
+        "Graded assignment with rubric submitted at module end"
+      ],
+      "related": ["Formative Assessment", "Rubric", "Learning Outcome"]
+    },
+    {
+      "term": "Distractor",
+      "definition": "An incorrect but plausible answer option in a multiple-choice question. Good distractors represent common misconceptions or errors, making the question more valid and preventing guessing. Typically 3-4 distractors per question.",
+      "examples": [
+        "Q: What is 2+2? A) 4 (correct) B) 3 (distractor) C) 5 (distractor) D) 22 (distractor based on concatenation error)",
+        "Distractor based on common mistake: forgetting to square the radius in area formula"
+      ],
+      "related": ["Quiz", "Multiple Choice", "Assessment"]
+    },
+    {
+      "term": "Scaffolding",
+      "definition": "Instructional technique providing temporary support structures that are gradually removed as learners gain independence. Includes hints, worked examples, templates, and guided practice. Enables learners to achieve beyond current ability.",
+      "examples": [
+        "Lesson 1: Fill-in-the-blank code, Lesson 2: Partial code, Lesson 3: Write from scratch",
+        "Provide a template for the first essay, then a checklist, then nothing",
+        "Worked example → partially worked example → independent problem"
+      ],
+      "related": ["Cognitive Load", "Learning Outcome", "Module"]
+    },
+    {
+      "term": "Cognitive Load",
+      "definition": "The amount of mental effort required to process information in working memory. Instructional design aims to manage cognitive load by chunking content, using multimedia principles, and progressively increasing complexity. Types: intrinsic, extraneous, germane.",
+      "examples": [
+        "Break complex topic into 3 short videos instead of one long lecture",
+        "Use diagrams to reduce text-heavy explanations",
+        "Introduce vocabulary before complex concepts"
+      ],
+      "related": ["Scaffolding", "Bloom's Taxonomy", "Module"]
+    },
+    {
+      "term": "ABCD Format",
+      "definition": "A framework for writing clear learning outcomes: Audience (who), Behavior (what action using observable verb), Condition (under what circumstances), Degree (how well). Ensures outcomes are specific and measurable.",
+      "examples": [
+        "Audience: 'Students', Behavior: 'will be able to write', Condition: 'given a prompt', Degree: 'a 500-word essay with no grammatical errors'",
+        "A: Learners, B: can create, C: using Python and matplotlib, D: three types of data visualizations"
+      ],
+      "related": ["Learning Outcome", "Bloom's Taxonomy", "Assessment"]
+    },
+    {
+      "term": "Hook",
+      "definition": "An attention-grabbing opening in instructional content that motivates learners and connects to their interests or experiences. Common types: question, story, surprising fact, scenario, or problem. First element in WWHAA framework.",
+      "examples": [
+        "Question: 'Have you ever wondered why planes stay in the air?'",
+        "Story: 'In 2008, a single typo cost a company $10 million...'",
+        "Surprising fact: 'There are more possible chess games than atoms in the universe'",
+        "Scenario: 'Imagine you're managing a team of 50 developers...'"
+      ],
+      "related": ["WWHAA", "Video Script", "Engagement"]
+    },
+    {
+      "term": "Module",
+      "definition": "A self-contained instructional unit focused on a specific topic or learning goal. Contains multiple lessons and activities. Typically takes 1-4 weeks to complete. Represents a major section of a course.",
+      "examples": [
+        "Module 1: Introduction to Python Basics (3 lessons, 12 activities)",
+        "Module 4: Object-Oriented Programming (4 lessons, 15 activities)"
+      ],
+      "related": ["Lesson", "Activity", "Course Structure"]
+    },
+    {
+      "term": "Activity",
+      "definition": "A specific learning task or content piece within a lesson. Types include video, reading, quiz, discussion, hands-on lab, assignment, or project. Each activity maps to one or more learning outcomes.",
+      "examples": [
+        "Activity: Watch 8-minute video on functions",
+        "Activity: Complete 10-question multiple choice quiz",
+        "Activity: Submit coding assignment implementing classes"
+      ],
+      "related": ["Module", "Lesson", "Content Type"]
+    },
+    {
+      "term": "LMS",
+      "definition": "Learning Management System. A software platform for delivering, tracking, and managing educational content. Examples include Canvas, Blackboard, Moodle, Coursera. Supports features like enrollment, grading, discussion forums, and analytics.",
+      "examples": [
+        "Upload SCORM package to Canvas LMS",
+        "Students access all course materials through the LMS",
+        "LMS tracks completion rates and quiz scores"
+      ],
+      "related": ["SCORM", "Export", "Analytics"]
+    },
+    {
+      "term": "Hands-On Lab",
+      "definition": "An interactive, practical activity where learners apply concepts by working through guided steps in a real or simulated environment. Provides scaffolded practice with immediate feedback. Often includes setup instructions, tasks, and validation.",
+      "examples": [
+        "Lab: Deploy a web application to AWS following step-by-step instructions",
+        "Lab: Analyze a dataset using provided Jupyter notebook with hints"
+      ],
+      "related": ["Activity", "Scaffolding", "Practice"]
+    },
+    {
+      "term": "Discussion Forum",
+      "definition": "An asynchronous online space for learners to post questions, share ideas, and engage in dialogue. Promotes peer learning, critical thinking, and community building. Often includes prompts, rubrics, and instructor moderation.",
+      "examples": [
+        "Prompt: Share a real-world example of this algorithm and explain why it's effective",
+        "Peer review discussion: Critique two classmates' project proposals"
+      ],
+      "related": ["Formative Assessment", "Engagement", "Peer Learning"]
+    }
+  ]
+}

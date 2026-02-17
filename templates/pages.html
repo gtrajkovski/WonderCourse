@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Pages - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/pages.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="pages-container" data-course-id="{{ course.id }}">
+    <div class="pages-header">
+        <h2 data-i18n="pages.title">Course Pages</h2>
+        <p class="pages-subtitle" data-i18n="pages.subtitle">Auto-generate documentation pages for your course</p>
+    </div>
+
+    <div class="pages-grid">
+        <!-- Syllabus Card -->
+        <div class="page-card" data-page-type="syllabus">
+            <div class="page-card-header">
+                <span class="page-icon">&#128197;</span>
+                <h3 data-i18n="pages.syllabus">Syllabus</h3>
+            </div>
+            <p class="page-description" data-i18n="pages.syllabusDesc">Course schedule, objectives, grading policy, and weekly breakdown.</p>
+            <div class="page-status" id="syllabus-status">
+                <span class="status-badge status-not-generated" data-i18n="pages.notGenerated">Not Generated</span>
+            </div>
+            <div class="page-actions">
+                <button class="btn btn-primary btn-generate" data-page-type="syllabus" data-i18n="pages.generate">Generate</button>
+                <button class="btn btn-secondary btn-view" data-page-type="syllabus" style="display: none;" data-i18n="pages.view">View</button>
+                <button class="btn btn-ghost btn-regenerate" data-page-type="syllabus" style="display: none;" data-i18n="pages.regenerate">Regenerate</button>
+            </div>
+        </div>
+
+        <!-- About Card -->
+        <div class="page-card" data-page-type="about">
+            <div class="page-card-header">
+                <span class="page-icon">&#128214;</span>
+                <h3 data-i18n="pages.about">About</h3>
+            </div>
+            <p class="page-description" data-i18n="pages.aboutDesc">Course overview, target audience, key takeaways, and prerequisites.</p>
+            <div class="page-status" id="about-status">
+                <span class="status-badge status-not-generated" data-i18n="pages.notGenerated">Not Generated</span>
+            </div>
+            <div class="page-actions">
+                <button class="btn btn-primary btn-generate" data-page-type="about" data-i18n="pages.generate">Generate</button>
+                <button class="btn btn-secondary btn-view" data-page-type="about" style="display: none;" data-i18n="pages.view">View</button>
+                <button class="btn btn-ghost btn-regenerate" data-page-type="about" style="display: none;" data-i18n="pages.regenerate">Regenerate</button>
+            </div>
+        </div>
+
+        <!-- Resources Card -->
+        <div class="page-card" data-page-type="resources">
+            <div class="page-card-header">
+                <span class="page-icon">&#128736;</span>
+                <h3 data-i18n="pages.resources">Resources</h3>
+            </div>
+            <p class="page-description" data-i18n="pages.resourcesDesc">Tools, technologies, additional materials, and helpful links.</p>
+            <div class="page-status" id="resources-status">
+                <span class="status-badge status-not-generated" data-i18n="pages.notGenerated">Not Generated</span>
+            </div>
+            <div class="page-actions">
+                <button class="btn btn-primary btn-generate" data-page-type="resources" data-i18n="pages.generate">Generate</button>
+                <button class="btn btn-secondary btn-view" data-page-type="resources" style="display: none;" data-i18n="pages.view">View</button>
+                <button class="btn btn-ghost btn-regenerate" data-page-type="resources" style="display: none;" data-i18n="pages.regenerate">Regenerate</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pages-bulk-actions">
+        <button class="btn btn-primary btn-large" id="btn-generate-all" data-i18n="pages.generateAll">Generate All Pages</button>
+    </div>
+
+    <!-- Page Preview Panel -->
+    <div class="page-preview" id="page-preview" style="display: none;">
+        <div class="preview-header">
+            <h3 id="preview-title" data-i18n="pages.pagePreview">Page Preview</h3>
+            <button class="btn btn-ghost btn-close-preview" id="btn-close-preview" data-i18n="common.close">Close</button>
+        </div>
+        <div class="preview-content" id="preview-content">
+            <!-- Content will be rendered here -->
+        </div>
+        <div class="preview-actions">
+            <button class="btn btn-secondary" id="btn-copy-content" data-i18n="pages.copyMarkdown">Copy as Markdown</button>
+            <button class="btn btn-danger btn-small" id="btn-delete-page" data-i18n="pages.deletePage">Delete Page</button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div id="generating-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-small">
+        <div class="modal-body generating-state">
+            <div class="generating-spinner"></div>
+            <p id="generating-message" data-i18n="pages.generatingPage">Generating page...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/pages.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseId = '{{ course.id }}';
+        window.pagesController = new PagesController(courseId);
+        window.pagesController.init();
+    });
+</script>
+{% endblock %}

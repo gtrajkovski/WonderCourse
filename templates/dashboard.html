@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Course Builder Studio{% endblock %}
+
+{% block body_class %}has-sidebar page-dashboard{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/dashboard.css') }}">
+<style>
+  /* Hide skeleton after page load */
+  .dashboard-skeleton {
+    display: none;
+  }
+
+  body.loading .dashboard-skeleton {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  body.loading .course-grid {
+    display: none;
+  }
+
+  body.loading .empty-state {
+    display: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h2 data-i18n="dashboard.title">My Courses</h2>
+        <div class="dashboard-actions">
+            <div class="view-toggle" data-i18n-title="dashboard.changeView" title="Change view">
+                <button class="view-btn active" data-view="grid" data-i18n-title="dashboard.gridView" title="Grid view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="1" y="1" width="6" height="6" rx="1"/>
+                        <rect x="9" y="1" width="6" height="6" rx="1"/>
+                        <rect x="1" y="9" width="6" height="6" rx="1"/>
+                        <rect x="9" y="9" width="6" height="6" rx="1"/>
+                    </svg>
+                </button>
+                <button class="view-btn" data-view="list" data-i18n-title="dashboard.listView" title="List view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="1" y="2" width="14" height="3" rx="1"/>
+                        <rect x="1" y="7" width="14" height="3" rx="1"/>
+                        <rect x="1" y="12" width="14" height="3" rx="1"/>
+                    </svg>
+                </button>
+                <button class="view-btn" data-view="compact" data-i18n-title="dashboard.compactView" title="Compact view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="1" y="3" width="14" height="2" rx="0.5"/>
+                        <rect x="1" y="7" width="14" height="2" rx="0.5"/>
+                        <rect x="1" y="11" width="14" height="2" rx="0.5"/>
+                    </svg>
+                </button>
+            </div>
+            <button class="btn btn-secondary" id="import-course-btn" data-i18n-title="dashboard.importCourse" title="Import course">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 4px;">
+                    <path d="M8 1a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 7.293V1.5A.5.5 0 0 1 8 1z"/>
+                    <path d="M2 13.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+                <span data-i18n="dashboard.import">Import</span>
+            </button>
+            <button class="btn btn-primary" id="create-course-btn" data-i18n="dashboard.newCourse">+ New Course</button>
+        </div>
+    </div>
+
+    <!-- Skeleton loading (shown briefly on initial load) -->
+    <div class="dashboard-skeleton">
+        {% from 'partials/skeleton.html' import skeleton_card %}
+        {{ skeleton_card() }}
+        {{ skeleton_card() }}
+        {{ skeleton_card() }}
+        {{ skeleton_card() }}
+    </div>
+
+    {% if courses %}
+    <!-- Grid View (default) -->
+    <div class="course-grid view-grid active">
+        {% for course in courses %}
+        <div class="course-card" data-course-id="{{ course.id }}" data-course-title="{{ course.title }}">
+            <div class="course-card-header">
+                <h3>{{ course.title }}</h3>
+                <span class="status-indicator status-{{ course.build_state|default('draft') }}">
+                    {{ course.build_state|default('draft')|replace('_', ' ')|title }}
+                </span>
+            </div>
+            <div class="course-card-body">
+                <p class="course-description">
+                    {{ course.description if course.description else 'No description' }}
+                </p>
+                <div class="badge-row">
+                    <span class="badge badge-count" data-i18n="dashboard.moduleCount" data-i18n-params='{"count": {{ course.module_count }}}'>{{ course.module_count }} modules</span>
+                    <span class="badge badge-count" data-i18n="dashboard.activityCount" data-i18n-params='{"count": {{ course.activity_count|default(0) }}}'>{{ course.activity_count|default(0) }} activities</span>
+                </div>
+                <div class="course-meta">
+                    <span class="course-updated"><span data-i18n="dashboard.updated">Updated</span>: {{ course.updated_at[:10] if course.updated_at else 'Never' }}</span>
+                </div>
+            </div>
+            <div class="course-card-footer">
+                <button class="btn btn-secondary btn-small btn-open" data-course-id="{{ course.id }}" data-i18n="dashboard.open">Open</button>
+                <button class="btn btn-danger btn-small btn-delete" data-course-id="{{ course.id }}" data-course-title="{{ course.title }}" data-i18n="common.delete">Delete</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- List View -->
+    <div class="course-list view-list">
+        {% for course in courses %}
+        <div class="course-list-item" data-course-id="{{ course.id }}" data-course-title="{{ course.title }}">
+            <div class="course-list-info">
+                <h3 class="course-list-title">{{ course.title }}</h3>
+                <p class="course-list-desc">{{ course.description if course.description else 'No description' }}</p>
+            </div>
+            <div class="course-list-meta">
+                <span class="badge badge-count" data-i18n="dashboard.moduleCount" data-i18n-params='{"count": {{ course.module_count }}}'>{{ course.module_count }} modules</span>
+                <span class="badge badge-count" data-i18n="dashboard.activityCount" data-i18n-params='{"count": {{ course.activity_count|default(0) }}}'>{{ course.activity_count|default(0) }} activities</span>
+                <span class="course-updated"><span data-i18n="dashboard.updated">Updated</span>: {{ course.updated_at[:10] if course.updated_at else 'Never' }}</span>
+            </div>
+            <div class="course-list-actions">
+                <button class="btn btn-secondary btn-small btn-open" data-course-id="{{ course.id }}" data-i18n="dashboard.open">Open</button>
+                <button class="btn btn-danger btn-small btn-delete" data-course-id="{{ course.id }}" data-course-title="{{ course.title }}" data-i18n="common.delete">Delete</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Compact View -->
+    <div class="course-compact view-compact">
+        <table class="course-table">
+            <thead>
+                <tr>
+                    <th data-i18n="dashboard.tableTitle">Title</th>
+                    <th data-i18n="dashboard.modules">Modules</th>
+                    <th data-i18n="dashboard.activities">Activities</th>
+                    <th data-i18n="dashboard.updated">Updated</th>
+                    <th data-i18n="common.actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr data-course-id="{{ course.id }}" data-course-title="{{ course.title }}">
+                    <td class="course-table-title">{{ course.title }}</td>
+                    <td>{{ course.module_count }}</td>
+                    <td>{{ course.activity_count|default(0) }}</td>
+                    <td>{{ course.updated_at[:10] if course.updated_at else 'Never' }}</td>
+                    <td class="course-table-actions">
+                        <button class="btn btn-secondary btn-small btn-open" data-course-id="{{ course.id }}" data-i18n="dashboard.open">Open</button>
+                        <button class="btn btn-danger btn-small btn-delete" data-course-id="{{ course.id }}" data-course-title="{{ course.title }}" data-i18n="common.delete">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📚</div>
+        <h3 data-i18n="dashboard.noCourses">No courses yet</h3>
+        <p data-i18n="dashboard.emptyDescription">Get started by creating your first course. Each course can contain multiple modules, lessons, and learning activities.</p>
+        <button class="btn btn-primary btn-large" id="btn-new-course-empty" data-i18n="dashboard.createFirst">+ Create First Course</button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Create Course Modal -->
+<div id="create-course-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="dashboard.createNewCourse">Create New Course</h2>
+        </div>
+        <form id="create-course-form" class="modal-form">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="course-title" class="form-label required" data-i18n="dashboard.courseTitle">Course Title</label>
+                    <input type="text" id="course-title" name="title" class="form-input" required data-i18n-placeholder="dashboard.enterCourseTitle" placeholder="Enter course title">
+                    <span class="form-hint" data-i18n="dashboard.courseTitleHint">Choose a descriptive title for your course</span>
+                </div>
+                <div class="form-group">
+                    <label for="course-description" class="form-label" data-i18n="dashboard.description">Description</label>
+                    <textarea id="course-description" name="description" class="form-textarea" rows="3" data-i18n-placeholder="dashboard.enterDescription" placeholder="Enter course description (optional)"></textarea>
+                    <span class="form-hint" data-i18n="dashboard.descriptionHint">Briefly describe what learners will achieve</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-i18n="dashboard.createCourse">Create Course</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-course-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="dashboard.deleteCourse">Delete Course</h2>
+        </div>
+        <div class="modal-body">
+            <p class="delete-warning"><span data-i18n="dashboard.deleteConfirm">Are you sure you want to delete</span> <strong class="course-title-to-delete"></strong>?</p>
+            <p class="delete-warning" data-i18n="dashboard.deleteWarning">This action cannot be undone. All modules, lessons, and activities in this course will be permanently removed.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btn-confirm-delete" data-i18n="dashboard.deleteCourse">Delete Course</button>
+        </div>
+    </div>
+</div>
+
+<!-- Import Course Modal -->
+<div id="import-course-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 data-i18n="dashboard.importCourse">Import Course</h2>
+        </div>
+        <form id="import-course-form" class="modal-form">
+            <div class="modal-body">
+                <div class="import-tabs">
+                    <button type="button" class="import-tab active" data-tab="file" data-i18n="dashboard.uploadFile">Upload File</button>
+                    <button type="button" class="import-tab" data-tab="json" data-i18n="dashboard.pasteJson">Paste JSON</button>
+                </div>
+
+                <div class="import-tab-content active" data-content="file">
+                    <div class="form-group">
+                        <label for="import-file" class="form-label" data-i18n="dashboard.courseFile">Course File</label>
+                        <div class="file-upload-area" id="file-upload-area">
+                            <input type="file" id="import-file" name="file" accept=".json,.zip" class="file-input">
+                            <div class="file-upload-prompt">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <p data-i18n="dashboard.dropFile">Drop a course file here or click to browse</p>
+                                <span class="file-hint" data-i18n="dashboard.fileHint">Accepts .json (course export) or .zip (full package)</span>
+                            </div>
+                            <div class="file-selected" style="display: none;">
+                                <span class="file-name"></span>
+                                <button type="button" class="btn-clear-file">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="import-tab-content" data-content="json">
+                    <div class="form-group">
+                        <label for="import-json" class="form-label" data-i18n="dashboard.courseJson">Course JSON</label>
+                        <textarea id="import-json" name="json" class="form-textarea code-textarea" rows="12" data-i18n-placeholder="dashboard.pasteJsonHere" placeholder='Paste course JSON here...'></textarea>
+                        <span class="form-hint" data-i18n="dashboard.jsonHint">Paste a complete course_data.json export</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="dashboard.importOptions">Import Options</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="import-new-ids" name="new_ids" checked>
+                            <span data-i18n="dashboard.generateNewIds">Generate new IDs (prevent conflicts)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="import-include-content" name="include_content" checked>
+                            <span data-i18n="dashboard.includeContent">Include generated content</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-i18n="dashboard.importCourse">Import Course</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/utils/lazy-loader.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/dashboard.js') }}"></script>
+{% endblock %}

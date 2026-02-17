@@ -1,0 +1,31 @@
+<!-- Comments Panel - Side panel for content comments -->
+<div id="comments-panel" class="comments-panel collapsed">
+  <button class="comments-panel-toggle" aria-label="Toggle comments panel" data-i18n-title="comments.toggle" title="Comments">
+    &#x1F4AC;
+  </button>
+
+  <div class="comments-header">
+    <h3 data-i18n="comments.title">Comments</h3>
+    <span class="comments-count" style="display: none;">0</span>
+    <button class="comments-close" aria-label="Close comments panel">&times;</button>
+  </div>
+
+  <div class="comments-filter">
+    <button class="comments-filter-btn active" data-filter="all" data-i18n="common.all">All</button>
+    <button class="comments-filter-btn" data-filter="unresolved" data-i18n="comments.unresolved">Unresolved</button>
+    <button class="comments-filter-btn" data-filter="mentions" data-i18n="comments.myMentions">My Mentions</button>
+  </div>
+
+  <div class="comment-list">
+    <div class="empty-state" data-i18n="comments.noComments">No comments yet</div>
+  </div>
+
+  <div class="add-comment">
+    <form class="add-comment-form">
+      <textarea class="form-textarea add-comment-input" data-i18n-placeholder="comments.addPlaceholder" placeholder="Add a comment... Use @name to mention someone" rows="2"></textarea>
+      <div class="add-comment-actions">
+        <button type="submit" class="btn btn-primary btn-small" data-i18n="comments.comment">Comment</button>
+      </div>
+    </form>
+  </div>
+</div>

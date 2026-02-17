@@ -1,0 +1,220 @@
+/* Course Pages Styles */
+
+.pages-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.pages-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.pages-header h2 {
+  color: var(--accent-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.pages-subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Pages Grid */
+.pages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Page Card */
+.page-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.page-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.page-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.page-icon {
+  font-size: 1.5rem;
+}
+
+.page-card-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.page-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+}
+
+.page-status {
+  margin-bottom: var(--spacing-md);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.status-not-generated {
+  background: var(--bg-input);
+  color: var(--text-muted);
+}
+
+.status-generated {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.status-generating {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.page-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* Bulk Actions */
+.pages-bulk-actions {
+  text-align: center;
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--spacing-lg);
+}
+
+/* Page Preview Panel */
+.page-preview {
+  margin-top: var(--spacing-xl);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.preview-header h3 {
+  margin: 0;
+  color: var(--accent-primary);
+}
+
+.preview-content {
+  padding: var(--spacing-lg);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.preview-content h1,
+.preview-content h2,
+.preview-content h3 {
+  color: var(--text-primary);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.preview-content h1:first-child,
+.preview-content h2:first-child {
+  margin-top: 0;
+}
+
+.preview-content p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+.preview-content ul,
+.preview-content ol {
+  color: var(--text-secondary);
+  padding-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.preview-content li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.preview-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--bg-base);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Generating State */
+.generating-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xl);
+}
+
+.generating-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-medium);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.modal-small .modal-content {
+  max-width: 300px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pages-container {
+    padding: var(--spacing-md);
+  }
+
+  .pages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-actions {
+    flex-direction: column;
+  }
+
+  .page-actions .btn {
+    width: 100%;
+  }
+}

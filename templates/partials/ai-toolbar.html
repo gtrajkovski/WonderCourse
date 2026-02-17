@@ -1,0 +1,107 @@
+<!-- AI Toolbar - Floating toolbar for inline AI editing -->
+<div id="ai-toolbar" class="ai-toolbar" style="display: none;" data-toolbar>
+    <div class="toolbar-content">
+        <!-- Header -->
+        <div class="toolbar-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #3d3d4d;">
+            <span style="font-weight: 600; color: #4a9eff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">AI Edit</span>
+            <span style="font-size: 0.75rem; color: #888;">Select text to edit</span>
+        </div>
+
+        <!-- Quick Actions Row -->
+        <div class="toolbar-section toolbar-quick-actions">
+            <button class="toolbar-btn" data-action="improve" title="Improve writing">
+                <span class="btn-icon">✨</span>
+                <span class="btn-label">Improve</span>
+            </button>
+            <button class="toolbar-btn" data-action="expand" title="Add more detail">
+                <span class="btn-icon">⇔</span>
+                <span class="btn-label">Expand</span>
+            </button>
+            <button class="toolbar-btn" data-action="simplify" title="Make simpler">
+                <span class="btn-icon">⇄</span>
+                <span class="btn-label">Simplify</span>
+            </button>
+            <button class="toolbar-btn" data-action="rewrite" title="Rewrite completely">
+                <span class="btn-icon">↻</span>
+                <span class="btn-label">Rewrite</span>
+            </button>
+
+            <!-- More Actions Dropdown -->
+            <div class="toolbar-dropdown">
+                <button class="toolbar-btn toolbar-more" data-toggle-dropdown title="More actions">
+                    <span class="btn-icon">⋯</span>
+                    <span class="btn-label">More</span>
+                </button>
+                <div class="dropdown-menu" data-dropdown-menu>
+                    <button class="dropdown-item" data-action="fix_grammar">Fix Grammar</button>
+                    <button class="dropdown-item" data-action="make_academic">Make Academic</button>
+                    <button class="dropdown-item" data-action="make_conversational">Make Conversational</button>
+                    <button class="dropdown-item" data-action="add_examples">Add Examples</button>
+                    <button class="dropdown-item" data-action="summarize">Summarize</button>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-submenu">
+                        <span class="dropdown-item dropdown-trigger">Change Tone ▸</span>
+                        <div class="dropdown-submenu-content">
+                            <button class="dropdown-item" data-action="custom" data-tone="formal">Formal</button>
+                            <button class="dropdown-item" data-action="custom" data-tone="friendly">Friendly</button>
+                            <button class="dropdown-item" data-action="custom" data-tone="professional">Professional</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Prompt Input (always visible per CONTEXT.md) -->
+        <div class="toolbar-section toolbar-custom-prompt">
+            <input
+                type="text"
+                class="custom-prompt-input"
+                placeholder="Custom instruction..."
+                data-custom-input
+                aria-label="Custom AI instruction"
+            />
+            <button class="toolbar-btn toolbar-btn-primary" data-action="custom" title="Send custom instruction">
+                <span class="btn-icon">→</span>
+            </button>
+        </div>
+
+        <!-- Preview Area (hidden by default) -->
+        <div class="toolbar-preview" data-preview style="display: none;">
+            <div class="preview-header">
+                <span class="preview-title">AI Suggestion</span>
+                <button class="preview-close" data-preview-close title="Close preview">×</button>
+            </div>
+            <div class="preview-diff" data-preview-diff>
+                <!-- Diff will be injected here -->
+            </div>
+            <div class="preview-actions">
+                <button class="btn btn-success btn-sm" data-preview-accept>Accept</button>
+                <button class="btn btn-secondary btn-sm" data-preview-reject>Reject</button>
+                <button class="btn btn-secondary btn-sm" data-preview-regenerate>Regenerate</button>
+            </div>
+        </div>
+
+        <!-- History Controls -->
+        <div class="toolbar-section toolbar-history">
+            <button class="toolbar-btn toolbar-btn-icon" data-undo title="Undo (Ctrl+Z)" disabled>
+                <span class="btn-icon">↶</span>
+            </button>
+            <button class="toolbar-btn toolbar-btn-icon" data-redo title="Redo (Ctrl+Shift+Z)" disabled>
+                <span class="btn-icon">↷</span>
+            </button>
+        </div>
+
+        <!-- Bloom's Level Indicator -->
+        <div class="toolbar-section toolbar-bloom">
+            <span class="bloom-badge" data-bloom-badge title="Bloom's taxonomy level">
+                <!-- Bloom level will be updated dynamically -->
+            </span>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="toolbar-loading" data-loading style="display: none;">
+        <span class="loading-spinner"></span>
+        <span class="loading-text">Generating suggestion...</span>
+    </div>
+</div>

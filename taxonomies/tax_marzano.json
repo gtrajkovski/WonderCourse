@@ -1,0 +1,158 @@
+{
+  "id": "tax_marzano",
+  "name": "Marzano's New Taxonomy",
+  "description": "Six-level taxonomy spanning three knowledge domains. Includes metacognitive and self-system levels unique to this framework.",
+  "taxonomy_type": "linear",
+  "is_system_preset": true,
+  "levels": [
+    {
+      "id": "marzano_retrieval",
+      "name": "Retrieval",
+      "value": "retrieval",
+      "description": "Recognize, recall, and execute basic information and procedures",
+      "order": 1,
+      "example_verbs": [
+        "recognize",
+        "recall",
+        "execute",
+        "identify",
+        "determine",
+        "select"
+      ],
+      "color": "#E57373"
+    },
+    {
+      "id": "marzano_comprehension",
+      "name": "Comprehension",
+      "value": "comprehension",
+      "description": "Integrate and symbolize knowledge into categories and relationships",
+      "order": 2,
+      "example_verbs": [
+        "integrate",
+        "symbolize",
+        "describe",
+        "explain",
+        "predict",
+        "represent"
+      ],
+      "color": "#FFB74D"
+    },
+    {
+      "id": "marzano_analysis",
+      "name": "Analysis",
+      "value": "analysis",
+      "description": "Match, classify, analyze errors, generalize, and specify",
+      "order": 3,
+      "example_verbs": [
+        "match",
+        "classify",
+        "analyze",
+        "generalize",
+        "specify",
+        "differentiate",
+        "categorize"
+      ],
+      "color": "#FFF176"
+    },
+    {
+      "id": "marzano_knowledge_utilization",
+      "name": "Knowledge Utilization",
+      "value": "knowledge_utilization",
+      "description": "Apply knowledge in decision-making, problem-solving, investigation",
+      "order": 4,
+      "example_verbs": [
+        "decide",
+        "solve",
+        "investigate",
+        "experiment",
+        "test",
+        "prove",
+        "adapt"
+      ],
+      "color": "#81C784"
+    },
+    {
+      "id": "marzano_metacognition",
+      "name": "Metacognition",
+      "value": "metacognition",
+      "description": "Monitor, evaluate, and regulate one's own cognitive processes",
+      "order": 5,
+      "example_verbs": [
+        "monitor",
+        "evaluate",
+        "regulate",
+        "plan",
+        "reflect",
+        "assess progress"
+      ],
+      "color": "#64B5F6"
+    },
+    {
+      "id": "marzano_self_system",
+      "name": "Self-System Thinking",
+      "value": "self_system",
+      "description": "Examine importance, self-efficacy, emotional response, and motivation",
+      "order": 6,
+      "example_verbs": [
+        "examine importance",
+        "assess efficacy",
+        "identify emotional response",
+        "examine motivation"
+      ],
+      "color": "#BA68C8"
+    }
+  ],
+  "activity_mappings": [
+    {
+      "activity_type": "video_lecture",
+      "compatible_levels": [
+        "retrieval",
+        "comprehension",
+        "analysis"
+      ],
+      "primary_levels": [
+        "comprehension"
+      ]
+    },
+    {
+      "activity_type": "hands_on_lab",
+      "compatible_levels": [
+        "analysis",
+        "knowledge_utilization"
+      ],
+      "primary_levels": [
+        "knowledge_utilization"
+      ]
+    },
+    {
+      "activity_type": "project_milestone",
+      "compatible_levels": [
+        "knowledge_utilization",
+        "metacognition",
+        "self_system"
+      ],
+      "primary_levels": [
+        "knowledge_utilization"
+      ]
+    },
+    {
+      "activity_type": "discussion_prompt",
+      "compatible_levels": [
+        "comprehension",
+        "analysis",
+        "metacognition",
+        "self_system"
+      ],
+      "primary_levels": [
+        "metacognition"
+      ]
+    }
+  ],
+  "require_progression": true,
+  "allow_regression_within": 1,
+  "minimum_unique_levels": 2,
+  "require_higher_order": true,
+  "higher_order_threshold": 4,
+  "created_at": "2026-02-16T21:41:31.195442",
+  "updated_at": "2026-02-16T21:41:31.195443"
+}

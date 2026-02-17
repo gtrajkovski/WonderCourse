@@ -1,0 +1,429 @@
+/* Audit Page Styles */
+
+.audit-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.audit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.audit-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.audit-subtitle {
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0 0;
+}
+
+/* Score Card */
+.score-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    margin-bottom: 2rem;
+}
+
+.score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent-primary) calc(var(--score, 0) * 3.6deg), var(--surface-default) 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.score-circle::before {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: var(--surface-elevated);
+}
+
+.score-value {
+    position: relative;
+    z-index: 1;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.score-label {
+    position: relative;
+    z-index: 1;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.score-breakdown {
+    display: flex;
+    gap: 2rem;
+}
+
+.score-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--surface-default);
+    border-radius: 8px;
+    min-width: 80px;
+}
+
+.stat-count {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+}
+
+.stat-error .stat-count {
+    color: var(--status-error);
+}
+
+.stat-warning .stat-count {
+    color: var(--status-warning);
+}
+
+.stat-info .stat-count {
+    color: var(--accent-primary);
+}
+
+.score-meta {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* No Audit State */
+.no-audit {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.no-audit-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.no-audit h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.no-audit p {
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem 0;
+}
+
+/* Issues Section */
+.issues-section {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.issues-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.issues-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.issues-filter {
+    display: flex;
+    gap: 1rem;
+}
+
+.issues-filter label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.issues-filter input[type="checkbox"] {
+    accent-color: var(--accent-primary);
+}
+
+/* Issues List */
+.issues-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.issue-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface-default);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.issue-item:hover {
+    background: var(--surface-hover);
+}
+
+.issue-item.resolved {
+    opacity: 0.6;
+}
+
+.issue-severity {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 0.5rem;
+    flex-shrink: 0;
+}
+
+.issue-severity.error {
+    background: var(--status-error);
+}
+
+.issue-severity.warning {
+    background: var(--status-warning);
+}
+
+.issue-severity.info {
+    background: var(--accent-primary);
+}
+
+.issue-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.issue-title {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.issue-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.issue-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.issue-check-type {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.issue-status-badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.issue-status-badge.open {
+    background: rgba(var(--status-error-rgb), 0.2);
+    color: var(--status-error);
+}
+
+.issue-status-badge.in_progress {
+    background: rgba(var(--status-warning-rgb), 0.2);
+    color: var(--status-warning);
+}
+
+.issue-status-badge.resolved {
+    background: rgba(var(--status-success-rgb), 0.2);
+    color: var(--status-success);
+}
+
+.issue-status-badge.wont_fix,
+.issue-status-badge.false_positive {
+    background: rgba(128, 128, 128, 0.2);
+    color: var(--text-secondary);
+}
+
+/* Checks Section */
+.checks-section {
+    margin-top: 2rem;
+}
+
+.checks-section h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+}
+
+.checks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.check-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+}
+
+.check-card:hover {
+    border-color: var(--accent-primary);
+}
+
+.check-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.check-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.check-card p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0 0 1rem 0;
+}
+
+.btn-run-check {
+    width: 100%;
+}
+
+/* Issue Modal */
+.issue-severity-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.issue-severity-badge.error {
+    background: rgba(var(--status-error-rgb), 0.2);
+    color: var(--status-error);
+}
+
+.issue-severity-badge.warning {
+    background: rgba(var(--status-warning-rgb), 0.2);
+    color: var(--status-warning);
+}
+
+.issue-severity-badge.info {
+    background: rgba(var(--accent-primary-rgb), 0.2);
+    color: var(--accent-primary);
+}
+
+.issue-section {
+    margin-bottom: 1.5rem;
+}
+
+.issue-section h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.affected-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--text-secondary);
+}
+
+.affected-list li {
+    margin-bottom: 0.25rem;
+}
+
+#issue-modal-fix {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Audit Running Modal */
+.audit-running {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.audit-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#audit-running-message {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Empty Issues State */
+.issues-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+}
+
+.issues-empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}

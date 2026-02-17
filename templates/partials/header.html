@@ -1,0 +1,70 @@
+<header class="app-header">
+  <div class="header-left">
+    <a href="/dashboard" class="header-logo">CBS</a>
+  </div>
+
+  <div class="header-center">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      {% if breadcrumb %}
+        {% for item in breadcrumb %}
+        <li class="breadcrumb-item {% if loop.last %}active{% endif %}">
+          {% if not loop.last %}
+          <a href="{{ item.url }}">{{ item.label }}</a>
+          {% else %}
+          {{ item.label }}
+          {% endif %}
+          {% if not loop.last %}
+          <span class="breadcrumb-separator">/</span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      {% endif %}
+    </nav>
+  </div>
+
+  <div class="header-right">
+    {% if course_id %}
+    <div class="header-collab-actions">
+      <button class="header-icon-btn" data-activity-feed onclick="window.collab && window.collab.toggleActivityFeed()" title="Activity Feed">
+        &#x1F514;
+      </button>
+      <button class="header-icon-btn" data-modal-target="collab-modal" title="Invite Collaborators">
+        &#x1F465;
+      </button>
+    </div>
+    {% endif %}
+
+    <div id="save-status" class="save-status">
+      <span class="save-status-icon"></span>
+      <span class="save-status-text" data-i18n="header.saved">Saved</span>
+    </div>
+
+    <div class="help-menu-wrapper" style="position: relative; margin-right: 12px;">
+      <button id="help-menu-btn" aria-label="Help Menu">
+        &#x2753; <span data-i18n="header.help">Help</span>
+      </button>
+      <div id="help-dropdown" class="help-dropdown">
+        <button class="help-dropdown-item" onclick="window.onboarding && window.onboarding.start()">
+          &#x1F3AF; <span data-i18n="header.replayTour">Replay Tour</span>
+        </button>
+        <button class="help-dropdown-item" onclick="window.help && window.help.togglePanel('glossary')">
+          &#x1F4D6; <span data-i18n="header.glossary">Glossary</span>
+        </button>
+        <button class="help-dropdown-item" onclick="window.onboarding && window.onboarding.reset(); alert('Onboarding reset. Refresh to see tour again.')">
+          &#x1F504; <span data-i18n="header.resetOnboarding">Reset Onboarding</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="language-selector-container"></div>
+
+    <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle dark/light theme" data-i18n-title="header.toggleTheme">
+      <span class="icon-sun">&#9728;</span>
+      <span class="icon-moon">&#9790;</span>
+    </button>
+
+    <div class="user-avatar" title="{{ current_user.email if current_user else 'User' }}">
+      {{ current_user.email[0].upper() if current_user and current_user.email else 'U' }}
+    </div>
+  </div>
+</header>

@@ -1,0 +1,30 @@
+{
+  "id": "lp_career_changer",
+  "name": "Career Changer",
+  "description": "Professional transitioning into tech from another field.",
+  "prior_knowledge": [],
+  "prerequisites": [],
+  "technical_level": "basic",
+  "industry_background": null,
+  "language_proficiency": "native",
+  "preferred_language": "English",
+  "jargon_familiarity": [],
+  "learning_preference": "mixed",
+  "attention_span_minutes": 15,
+  "prefers_examples": true,
+  "prefers_analogies": true,
+  "learning_context": "career_change",
+  "available_hours_per_week": 10,
+  "has_time_constraints": false,
+  "completion_deadline": null,
+  "accessibility_needs": [],
+  "color_blind_friendly": false,
+  "large_text_needed": false,
+  "learning_goals": [
+    "Build portfolio",
+    "Land entry-level role"
+  ],
+  "certification_goal": false,
+  "created_at": "2026-02-16T21:06:32.606951",
+  "updated_at": "2026-02-16T21:06:32.606952"
+}

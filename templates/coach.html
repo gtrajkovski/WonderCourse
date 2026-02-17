@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ persona.name }} - Coach Session{% endblock %}
+
+{% block body_class %}coach-page{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/coach.css') }}">
+{% endblock %}
+
+{% block body_layout %}
+<!-- Full-height coach container -->
+<div class="coach-container">
+    <!-- Header -->
+    <div class="coach-header">
+        <div class="coach-info">
+            <div class="coach-avatar">
+                <span class="avatar-icon">🧑‍🏫</span>
+            </div>
+            <div class="coach-identity">
+                <h1 class="coach-name">{{ persona.name }}</h1>
+                <p class="activity-title">{{ activity.title }}</p>
+            </div>
+        </div>
+        <div class="coach-controls">
+            <div class="coverage-progress">
+                <label data-i18n="coachSession.coverage">Coverage</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="coverage-bar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text" id="coverage-text">0%</span>
+            </div>
+            <button class="btn btn-danger" id="end-session-btn" data-i18n="coachSession.endSession">End Session</button>
+        </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="coach-main">
+        <!-- Messages area -->
+        <div class="messages-container" id="messages-container">
+            <div class="messages-list" id="messages-list">
+                <!-- Messages will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Evaluation sidebar (toggleable) -->
+        <div class="evaluation-sidebar" id="evaluation-sidebar">
+            <div class="evaluation-header">
+                <h2 data-i18n="coachSession.evaluation">Evaluation</h2>
+                <button class="toggle-btn" id="toggle-eval-btn">×</button>
+            </div>
+            <div class="evaluation-content">
+                <div class="current-level">
+                    <label data-i18n="coachSession.currentLevel">Current Level</label>
+                    <div class="level-badge" id="current-level-badge" data-i18n="coachSession.notEvaluated">Not evaluated</div>
+                </div>
+                <div class="evaluation-section">
+                    <h3 data-i18n="coachSession.strengths">Strengths</h3>
+                    <ul class="strengths-list" id="strengths-list">
+                        <li class="empty-state" data-i18n="coachSession.completeToSee">Complete a turn to see evaluation</li>
+                    </ul>
+                </div>
+                <div class="evaluation-section">
+                    <h3 data-i18n="coachSession.areasForImprovement">Areas for Improvement</h3>
+                    <ul class="improvements-list" id="improvements-list">
+                        <li class="empty-state" data-i18n="coachSession.completeToSee">Complete a turn to see evaluation</li>
+                    </ul>
+                </div>
+                {% if hints_enabled %}
+                <div class="evaluation-section">
+                    <button class="btn btn-secondary" id="show-hint-btn" data-i18n="coachSession.showHint">Show Hint</button>
+                    <div class="hint-text" id="hint-text" style="display: none;"></div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Input area -->
+    <div class="coach-input">
+        <form id="message-form">
+            <textarea
+                id="message-input"
+                data-i18n-placeholder="coach.typePlaceholder"
+                placeholder="Type your message..."
+                rows="3"
+            ></textarea>
+            <button type="submit" class="btn btn-primary" id="send-btn" data-i18n="coachSession.send">Send</button>
+        </form>
+    </div>
+</div>
+
+<!-- Session summary modal (shown at end) -->
+<div class="modal" id="summary-modal" style="display: none;">
+    <div class="modal-content summary-card">
+        <div class="modal-header">
+            <h2 data-i18n="coachSession.sessionSummary">Session Summary</h2>
+        </div>
+        <div class="modal-body" id="summary-content">
+            <!-- Summary content will be inserted here -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="new-session-btn" data-i18n="coachSession.newSession">New Session</button>
+            <button class="btn btn-primary" id="continue-session-btn" data-i18n="coachSession.continueSession">Continue Session</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/pages/coach.js') }}"></script>
+<script>
+    // Initialize coach controller on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const coach = new CoachController(
+            '{{ course.id }}',
+            '{{ activity.id }}',
+            {{ persona | tojson }},
+            {{ dialogue_structure | tojson }}
+        );
+    });
+</script>
+{% endblock %}

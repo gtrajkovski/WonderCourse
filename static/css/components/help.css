@@ -1,0 +1,485 @@
+/**
+ * Help System Styles
+ * Includes onboarding tour, tooltips, and help panels
+ */
+
+/* ============================================
+   Intro.js Theme Overrides (Dark Theme)
+   ============================================ */
+
+.introjs-overlay {
+  background-color: rgba(26, 26, 46, 0.85) !important;
+}
+
+.introjs-tooltip {
+  background-color: #16213e !important;
+  color: #e4e4e7 !important;
+  border: 1px solid rgba(77, 166, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  max-width: 400px;
+}
+
+.introjs-tooltip-header {
+  padding: 16px 20px 0;
+}
+
+.introjs-tooltip-title {
+  color: #ffffff !important;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.introjs-tooltiptext {
+  padding: 16px 20px;
+  color: #e4e4e7 !important;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.introjs-arrow {
+  border-color: #16213e !important;
+}
+
+.introjs-arrow.top {
+  border-bottom-color: #16213e !important;
+}
+
+.introjs-arrow.bottom {
+  border-top-color: #16213e !important;
+}
+
+.introjs-arrow.left {
+  border-right-color: #16213e !important;
+}
+
+.introjs-arrow.right {
+  border-left-color: #16213e !important;
+}
+
+.introjs-tooltipbuttons {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 20px;
+}
+
+.introjs-button {
+  background-color: #4da6ff !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.introjs-button:hover {
+  background-color: #3d96ef !important;
+}
+
+.introjs-button:focus {
+  outline: 2px solid rgba(77, 166, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.introjs-prevbutton {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #e4e4e7 !important;
+}
+
+.introjs-prevbutton:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.introjs-skipbutton {
+  color: #9ca3af !important;
+  font-weight: normal !important;
+}
+
+.introjs-skipbutton:hover {
+  color: #e4e4e7 !important;
+}
+
+.introjs-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.introjs-helperLayer {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid #4da6ff;
+  border-radius: 4px;
+  box-shadow: 0 0 0 9999px rgba(26, 26, 46, 0.85);
+}
+
+.introjs-helperNumberLayer {
+  background: linear-gradient(135deg, #4da6ff, #3d96ef);
+  color: #ffffff !important;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 2px 8px rgba(77, 166, 255, 0.3);
+}
+
+.introjs-progressbar {
+  background-color: rgba(77, 166, 255, 0.2);
+}
+
+.introjs-progress {
+  background-color: #4da6ff;
+}
+
+/* ============================================
+   Help Button & Tooltips
+   ============================================ */
+
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background-color: transparent;
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: help;
+  position: relative;
+  transition: all 0.2s;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.help-btn:hover {
+  background-color: rgba(77, 166, 255, 0.1);
+  border-color: #4da6ff;
+  color: #4da6ff;
+}
+
+.help-btn::after {
+  content: '?';
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 300px;
+  padding: 8px 12px;
+  background-color: #16213e;
+  color: #e4e4e7;
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px solid rgba(77, 166, 255, 0.2);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 1000;
+  white-space: normal;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #16213e;
+}
+
+.help-btn:hover .tooltip {
+  opacity: 1;
+}
+
+/* ============================================
+   Help Panel (Slide-in from right)
+   ============================================ */
+
+.help-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 100vh;
+  background-color: var(--card-bg, #16213e);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+}
+
+.help-panel.open {
+  transform: translateX(0);
+}
+
+.help-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.help-panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.help-panel-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.help-panel-close:hover {
+  color: #e4e4e7;
+}
+
+.help-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.help-panel-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+}
+
+.help-panel-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e4e4e7;
+  margin: 0 0 16px 0;
+}
+
+.help-panel-content ul {
+  margin: 0 0 16px 20px;
+  padding: 0;
+}
+
+.help-panel-content li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e4e4e7;
+  margin-bottom: 8px;
+}
+
+.help-panel-content code {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4da6ff;
+}
+
+/* ============================================
+   Help Menu Button
+   ============================================ */
+
+#help-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: #e4e4e7;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#help-menu-btn:hover {
+  background-color: rgba(77, 166, 255, 0.1);
+  border-color: #4da6ff;
+}
+
+.help-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: all 0.2s;
+  z-index: 1000;
+}
+
+.help-dropdown.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.help-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #e4e4e7;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.help-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.help-dropdown-item:hover {
+  background-color: rgba(77, 166, 255, 0.1);
+}
+
+.help-dropdown-item:focus {
+  outline: 2px solid rgba(77, 166, 255, 0.5);
+  outline-offset: -2px;
+}
+
+/* ============================================
+   Glossary Styles
+   ============================================ */
+
+.glossary-search {
+  margin-bottom: 20px;
+}
+
+#glossary-search-input {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: #e4e4e7;
+  font-size: 14px;
+}
+
+#glossary-search-input:focus {
+  outline: 2px solid rgba(77, 166, 255, 0.5);
+  outline-offset: 0;
+  border-color: #4da6ff;
+}
+
+.glossary-results {
+  margin-top: 20px;
+}
+
+.glossary-group {
+  margin-bottom: 24px;
+}
+
+.glossary-letter {
+  font-size: 18px;
+  font-weight: 700;
+  color: #4da6ff;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid rgba(77, 166, 255, 0.3);
+}
+
+.glossary-term {
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid rgba(77, 166, 255, 0.5);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.glossary-term:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-left-color: #4da6ff;
+}
+
+.glossary-term-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+
+.glossary-term-definition {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e4e4e7;
+  margin: 0 0 12px 0;
+}
+
+.glossary-term-examples,
+.glossary-term-related {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 8px;
+}
+
+.glossary-term-examples strong,
+.glossary-term-related strong {
+  color: #e4e4e7;
+}
+
+.glossary-term-examples ul {
+  margin: 6px 0 0 20px;
+  padding: 0;
+}
+
+.glossary-term-examples li {
+  color: #9ca3af;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.glossary-link {
+  color: #4da6ff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.glossary-link:hover {
+  color: #3d96ef;
+  text-decoration: underline;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+  .help-panel {
+    width: 100%;
+  }
+
+  .introjs-tooltip {
+    max-width: 90vw;
+  }
+}

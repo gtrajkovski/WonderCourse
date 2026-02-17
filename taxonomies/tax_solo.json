@@ -1,0 +1,129 @@
+{
+  "id": "tax_solo",
+  "name": "SOLO Taxonomy",
+  "description": "Structure of Observed Learning Outcomes. Focuses on observable complexity of student responses rather than intended objectives.",
+  "taxonomy_type": "linear",
+  "is_system_preset": true,
+  "levels": [
+    {
+      "id": "solo_prestructural",
+      "name": "Prestructural",
+      "value": "prestructural",
+      "description": "No understanding demonstrated; may miss the point entirely",
+      "order": 1,
+      "example_verbs": [
+        "misses point",
+        "incompetent",
+        "irrelevant"
+      ],
+      "color": "#BDBDBD"
+    },
+    {
+      "id": "solo_unistructural",
+      "name": "Unistructural",
+      "value": "unistructural",
+      "description": "Simple, concrete understanding with one relevant aspect",
+      "order": 2,
+      "example_verbs": [
+        "identify",
+        "name",
+        "follow",
+        "memorize",
+        "define",
+        "count"
+      ],
+      "color": "#E57373"
+    },
+    {
+      "id": "solo_multistructural",
+      "name": "Multistructural",
+      "value": "multistructural",
+      "description": "Several relevant aspects identified but not integrated",
+      "order": 3,
+      "example_verbs": [
+        "describe",
+        "list",
+        "combine",
+        "enumerate",
+        "classify",
+        "outline"
+      ],
+      "color": "#FFB74D"
+    },
+    {
+      "id": "solo_relational",
+      "name": "Relational",
+      "value": "relational",
+      "description": "Aspects are integrated into a coherent whole",
+      "order": 4,
+      "example_verbs": [
+        "analyze",
+        "compare",
+        "contrast",
+        "explain causes",
+        "relate",
+        "apply",
+        "integrate"
+      ],
+      "color": "#81C784"
+    },
+    {
+      "id": "solo_extended_abstract",
+      "name": "Extended Abstract",
+      "value": "extended_abstract",
+      "description": "Understanding extends to abstract principles and new applications",
+      "order": 5,
+      "example_verbs": [
+        "theorize",
+        "generalize",
+        "hypothesize",
+        "reflect",
+        "generate",
+        "create",
+        "predict"
+      ],
+      "color": "#BA68C8"
+    }
+  ],
+  "activity_mappings": [
+    {
+      "activity_type": "video_lecture",
+      "compatible_levels": [
+        "unistructural",
+        "multistructural",
+        "relational"
+      ],
+      "primary_levels": [
+        "multistructural"
+      ]
+    },
+    {
+      "activity_type": "hands_on_lab",
+      "compatible_levels": [
+        "multistructural",
+        "relational",
+        "extended_abstract"
+      ],
+      "primary_levels": [
+        "relational"
+      ]
+    },
+    {
+      "activity_type": "project_milestone",
+      "compatible_levels": [
+        "relational",
+        "extended_abstract"
+      ],
+      "primary_levels": [
+        "extended_abstract"
+      ]
+    }
+  ],
+  "require_progression": true,
+  "allow_regression_within": 1,
+  "minimum_unique_levels": 2,
+  "require_higher_order": true,
+  "higher_order_threshold": 4,
+  "created_at": "2026-02-16T21:41:31.195411",
+  "updated_at": "2026-02-16T21:41:31.195413"
+}

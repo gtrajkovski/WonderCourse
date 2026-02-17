@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Dashboard - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/progress.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="progress-dashboard" data-course-id="{{ course.id }}">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1 data-i18n="progress.title">Progress Dashboard</h1>
+        <p class="course-title">{{ course.title }}</p>
+    </div>
+
+    <!-- Summary Cards Row -->
+    <div class="summary-cards">
+        <div class="summary-card" id="card-completion">
+            <div class="card-progress">
+                <svg class="progress-ring" viewBox="0 0 36 36">
+                    <path class="progress-ring-bg"
+                        d="M18 2.0845
+                           a 15.9155 15.9155 0 0 1 0 31.831
+                           a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path class="progress-ring-fill" id="completion-ring"
+                        stroke-dasharray="0, 100"
+                        d="M18 2.0845
+                           a 15.9155 15.9155 0 0 1 0 31.831
+                           a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+                <div class="card-value" id="completion-percentage">0%</div>
+            </div>
+            <div class="card-label" data-i18n="progress.complete">Complete</div>
+        </div>
+        <div class="summary-card" id="card-activities">
+            <div class="card-icon">&#128203;</div>
+            <div class="card-value" id="total-activities">0</div>
+            <div class="card-label" data-i18n="progress.activities">Activities</div>
+        </div>
+        <div class="summary-card" id="card-duration">
+            <div class="card-icon">&#9202;</div>
+            <div class="card-value" id="total-duration">0 min</div>
+            <div class="card-label" data-i18n="progress.duration">Duration</div>
+            <div class="card-sub" id="duration-target"><span data-i18n="progress.target">Target:</span> 0 min</div>
+        </div>
+        <div class="summary-card" id="card-quality">
+            <div class="card-icon">&#127942;</div>
+            <div class="card-value" id="quality-score">--</div>
+            <div class="card-label" data-i18n="progress.qualityScore">Quality Score</div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid">
+        <!-- Build State Distribution -->
+        <div class="dashboard-panel" id="panel-states">
+            <h3 data-i18n="progress.buildStatus">Build Status</h3>
+            <div class="state-bars" id="state-bars">
+                <div class="state-bar" data-state="draft">
+                    <div class="state-label" data-i18n="buildStates.draft">Draft</div>
+                    <div class="state-bar-track">
+                        <div class="state-bar-fill state-draft"></div>
+                    </div>
+                    <div class="state-count">0</div>
+                </div>
+                <div class="state-bar" data-state="generating">
+                    <div class="state-label" data-i18n="buildStates.generating">Generating</div>
+                    <div class="state-bar-track">
+                        <div class="state-bar-fill state-generating"></div>
+                    </div>
+                    <div class="state-count">0</div>
+                </div>
+                <div class="state-bar" data-state="generated">
+                    <div class="state-label" data-i18n="buildStates.generated">Generated</div>
+                    <div class="state-bar-track">
+                        <div class="state-bar-fill state-generated"></div>
+                    </div>
+                    <div class="state-count">0</div>
+                </div>
+                <div class="state-bar" data-state="reviewed">
+                    <div class="state-label" data-i18n="buildStates.reviewed">Reviewed</div>
+                    <div class="state-bar-track">
+                        <div class="state-bar-fill state-reviewed"></div>
+                    </div>
+                    <div class="state-count">0</div>
+                </div>
+                <div class="state-bar" data-state="approved">
+                    <div class="state-label" data-i18n="buildStates.approved">Approved</div>
+                    <div class="state-bar-track">
+                        <div class="state-bar-fill state-approved"></div>
+                    </div>
+                    <div class="state-count">0</div>
+                </div>
+                <div class="state-bar" data-state="published">
+                    <div class="state-label" data-i18n="buildStates.published">Published</div>
+                    <div class="state-bar-track">
+                        <div class="state-bar-fill state-published"></div>
+                    </div>
+                    <div class="state-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module Progress -->
+        <div class="dashboard-panel" id="panel-modules">
+            <h3 data-i18n="progress.moduleProgress">Module Progress</h3>
+            <div class="module-list" id="module-list">
+                <div class="empty-message" data-i18n="progress.noModulesYet">No modules yet</div>
+            </div>
+        </div>
+
+        <!-- Content Type Breakdown -->
+        <div class="dashboard-panel" id="panel-content-types">
+            <h3 data-i18n="progress.contentTypes">Content Types</h3>
+            <div class="content-type-chart" id="content-type-chart">
+                <div class="empty-message" data-i18n="progress.noActivitiesYet">No activities yet</div>
+            </div>
+        </div>
+
+        <!-- Structure Overview -->
+        <div class="dashboard-panel" id="panel-structure">
+            <h3 data-i18n="progress.courseStructure">Course Structure</h3>
+            <div class="structure-stats" id="structure-stats">
+                <div class="structure-stat">
+                    <div class="stat-value" id="module-count">0</div>
+                    <div class="stat-label" data-i18n="dashboard.modules">Modules</div>
+                </div>
+                <div class="structure-stat">
+                    <div class="stat-value" id="lesson-count">0</div>
+                    <div class="stat-label" data-i18n="dashboard.lessons">Lessons</div>
+                </div>
+                <div class="structure-stat">
+                    <div class="stat-value" id="activity-count">0</div>
+                    <div class="stat-label" data-i18n="dashboard.activities">Activities</div>
+                </div>
+            </div>
+            <div class="word-count-stat">
+                <span class="label" data-i18n="progress.totalWords">Total Words:</span>
+                <span class="value" id="total-words">0</span>
+            </div>
+        </div>
+
+        <!-- Activity List -->
+        <div class="dashboard-panel panel-wide" id="panel-activities">
+            <div class="panel-header-row">
+                <h3 data-i18n="progress.activitiesByStatus">Activities by Status</h3>
+                <div class="activity-filters" id="activity-filters">
+                    <button class="filter-btn active" data-filter="all" data-i18n="common.all">All</button>
+                    <button class="filter-btn" data-filter="draft" data-i18n="buildStates.draft">Draft</button>
+                    <button class="filter-btn" data-filter="generated" data-i18n="buildStates.generated">Generated</button>
+                    <button class="filter-btn" data-filter="approved" data-i18n="buildStates.approved">Approved</button>
+                </div>
+            </div>
+            <div class="activity-table-container">
+                <table class="activity-table" id="activity-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="progress.tableTitle">Title</th>
+                            <th data-i18n="progress.tableModule">Module</th>
+                            <th data-i18n="progress.tableType">Type</th>
+                            <th data-i18n="progress.tableStatus">Status</th>
+                            <th data-i18n="progress.tableWords">Words</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activity-tbody">
+                        <tr class="empty-row">
+                            <td colspan="5" class="empty-message" data-i18n="progress.noActivitiesYet">No activities yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/pages/progress.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseId = '{{ course.id }}';
+        window.progressDashboard = new ProgressDashboard(courseId);
+        window.progressDashboard.init();
+    });
+</script>
+{% endblock %}

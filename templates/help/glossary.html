@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}Glossary - Course Builder Studio{% endblock %}
+
+{% block body_class %}has-sidebar page-glossary{% endblock %}
+
+{% block extra_head %}
+<style>
+  .glossary-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .glossary-header {
+    margin-bottom: 32px;
+  }
+
+  .glossary-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+  }
+
+  .glossary-header p {
+    font-size: 16px;
+    color: #9ca3af;
+    margin: 0;
+  }
+
+  .glossary-search-bar {
+    margin-bottom: 32px;
+  }
+
+  .glossary-search-bar input {
+    width: 100%;
+    max-width: 600px;
+    padding: 12px 16px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: #e4e4e7;
+    font-size: 16px;
+  }
+
+  .glossary-search-bar input:focus {
+    outline: 2px solid rgba(77, 166, 255, 0.5);
+    outline-offset: 0;
+    border-color: #4da6ff;
+  }
+
+  .glossary-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .glossary-section {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+  }
+
+  .glossary-letter-heading {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4da6ff;
+    margin: 0 0 20px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(77, 166, 255, 0.3);
+  }
+
+  .glossary-item {
+    margin-bottom: 20px;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid rgba(77, 166, 255, 0.5);
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .glossary-item:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-left-color: #4da6ff;
+  }
+
+  .glossary-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .glossary-term-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+  }
+
+  .glossary-term-def {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #e4e4e7;
+    margin: 0 0 12px 0;
+  }
+
+  .glossary-examples {
+    margin-top: 12px;
+    padding: 12px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  .glossary-examples-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e4e4e7;
+    margin: 0 0 8px 0;
+  }
+
+  .glossary-examples ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .glossary-examples li {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+
+  .glossary-related {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #9ca3af;
+  }
+
+  .glossary-related strong {
+    color: #e4e4e7;
+  }
+
+  .glossary-related a {
+    color: #4da6ff;
+    text-decoration: none;
+    margin: 0 4px;
+    transition: color 0.2s;
+  }
+
+  .glossary-related a:hover {
+    color: #3d96ef;
+    text-decoration: underline;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 40px;
+    color: #9ca3af;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #9ca3af;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="glossary-page">
+  <div class="glossary-header">
+    <h1 data-i18n="glossary.title">Instructional Design Glossary</h1>
+    <p data-i18n="glossary.subtitle">Definitions and examples of key concepts used in course design and pedagogy.</p>
+  </div>
+
+  <div class="glossary-search-bar">
+    <input
+      type="text"
+      id="glossary-search"
+      data-i18n-placeholder="glossary.searchPlaceholder"
+      placeholder="Search terms and definitions..."
+      aria-label="Search glossary"
+    />
+  </div>
+
+  <div id="glossary-container" class="glossary-grid">
+    <div class="loading-state" data-i18n="glossary.loading">Loading glossary...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Glossary page controller
+  class GlossaryPageController {
+    constructor() {
+      this.glossary = null;
+      this.container = document.getElementById('glossary-container');
+      this.searchInput = document.getElementById('glossary-search');
+    }
+
+    async init() {
+      await this.loadGlossary();
+      this.bindEventHandlers();
+    }
+
+    async loadGlossary() {
+      try {
+        const response = await fetch('/api/help/glossary');
+        if (!response.ok) {
+          throw new Error('Failed to load glossary');
+        }
+
+        const data = await response.json();
+        this.glossary = data.terms || [];
+        this.renderGlossary();
+      } catch (error) {
+        console.error('Error loading glossary:', error);
+        this.container.innerHTML = '<div class="empty-state">Error loading glossary. Please try again later.</div>';
+      }
+    }
+
+    renderGlossary(filter = '') {
+      if (!this.glossary || this.glossary.length === 0) {
+        this.container.innerHTML = '<div class="empty-state">No terms found.</div>';
+        return;
+      }
+
+      // Filter terms
+      const filteredTerms = filter
+        ? this.glossary.filter(term => {
+            const searchText = (term.term + ' ' + term.definition).toLowerCase();
+            return searchText.includes(filter.toLowerCase());
+          })
+        : this.glossary;
+
+      if (filteredTerms.length === 0) {
+        this.container.innerHTML = '<div class="empty-state">No matching terms found.</div>';
+        return;
+      }
+
+      // Group by first letter
+      const grouped = {};
+      filteredTerms.forEach(term => {
+        const letter = term.term[0].toUpperCase();
+        if (!grouped[letter]) {
+          grouped[letter] = [];
+        }
+        grouped[letter].push(term);
+      });
+
+      // Render grouped terms
+      let html = '';
+      Object.keys(grouped).sort().forEach(letter => {
+        html += '<div class="glossary-section">';
+        html += `<h2 class="glossary-letter-heading">${letter}</h2>`;
+
+        grouped[letter].forEach(term => {
+          html += '<div class="glossary-item">';
+          html += `<h3 class="glossary-term-name">${term.term}</h3>`;
+          html += `<p class="glossary-term-def">${term.definition}</p>`;
+
+          if (term.examples && term.examples.length > 0) {
+            html += '<div class="glossary-examples">';
+            html += '<div class="glossary-examples-title">Examples:</div>';
+            html += '<ul>';
+            term.examples.forEach(example => {
+              html += `<li>${example}</li>`;
+            });
+            html += '</ul>';
+            html += '</div>';
+          }
+
+          if (term.related && term.related.length > 0) {
+            html += '<div class="glossary-related">';
+            html += '<strong>Related:</strong> ';
+            html += term.related.map(r => `<a href="#${r.toLowerCase()}" class="related-link">${r}</a>`).join(', ');
+            html += '</div>';
+          }
+
+          html += '</div>';
+        });
+
+        html += '</div>';
+      });
+
+      this.container.innerHTML = html;
+
+      // Bind related term links
+      this.container.querySelectorAll('.related-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const termName = e.target.textContent;
+          this.searchInput.value = termName;
+          this.renderGlossary(termName);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+    }
+
+    bindEventHandlers() {
+      if (this.searchInput) {
+        this.searchInput.addEventListener('input', (e) => {
+          this.renderGlossary(e.target.value.trim());
+        });
+      }
+    }
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const controller = new GlossaryPageController();
+    controller.init();
+  });
+</script>
+{% endblock %}

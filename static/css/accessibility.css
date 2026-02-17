@@ -1,0 +1,180 @@
+/* Accessibility Overrides
+ * Ensures all buttons and elements with colored backgrounds have readable text
+ */
+
+/* Force white text on all primary accent backgrounds */
+[class*="btn-primary"],
+.btn-primary,
+button.btn-primary,
+a.btn-primary {
+  color: #ffffff !important;
+}
+
+/* Force white text on all danger/error backgrounds */
+[class*="btn-danger"],
+.btn-danger,
+button.btn-danger,
+a.btn-danger {
+  color: #ffffff !important;
+}
+
+/* Force white text on all success backgrounds */
+[class*="btn-success"],
+.btn-success,
+button.btn-success,
+a.btn-success {
+  color: #ffffff !important;
+}
+
+/* Force white text on all warning backgrounds */
+[class*="btn-warning"],
+.btn-warning,
+button.btn-warning,
+a.btn-warning {
+  color: #ffffff !important;
+}
+
+/* Badge elements with accent backgrounds */
+.badge-count,
+.badge.badge-count,
+span.badge-count {
+  color: #ffffff !important;
+}
+
+/* Introjs buttons - help tour */
+.introjs-button {
+  color: #ffffff !important;
+}
+
+.introjs-nextbutton,
+.introjs-donebutton {
+  background-color: var(--accent-primary, #4361ee) !important;
+  color: #ffffff !important;
+}
+
+.introjs-prevbutton {
+  background-color: var(--bg-panel, #16213e) !important;
+  color: var(--text-primary, #ffffff) !important;
+}
+
+/* Elements with accent-primary background need white text */
+.nav-item.active,
+.tree-item.active,
+.activity-item.selected,
+.collaborator-badge,
+.role-badge,
+.user-role-badge,
+.invite-btn,
+.send-btn,
+.submit-btn,
+.generate-btn,
+.export-btn,
+.save-btn,
+.add-btn,
+.create-btn,
+.run-btn {
+  color: #ffffff !important;
+}
+
+/* Collaboration elements */
+.collaboration-modal .btn-primary,
+.collab-modal .btn-primary,
+.invite-modal .btn-primary {
+  color: #ffffff !important;
+}
+
+/* Activity feed elements */
+.activity-feed .btn,
+.activity-load-more .btn {
+  color: #ffffff !important;
+}
+
+/* Coach chat elements */
+.coach-send-btn,
+.coach-action-btn {
+  color: #ffffff !important;
+}
+
+/* Builder page elements */
+.add-module-btn,
+.add-lesson-btn,
+.add-activity-btn {
+  color: #ffffff !important;
+}
+
+/* Studio page elements */
+.generate-content-btn,
+.regenerate-btn {
+  color: #ffffff !important;
+}
+
+/* Progress page elements */
+.progress-action-btn {
+  color: #ffffff !important;
+}
+
+/* Publish page elements */
+.export-action-btn {
+  color: #ffffff !important;
+}
+
+/* Planner page elements */
+.generate-blueprint-btn,
+.blueprint-action-btn {
+  color: #ffffff !important;
+}
+
+/* Modal buttons */
+.modal-footer .btn-primary,
+.modal-actions .btn-primary,
+.dialog-actions .btn-primary {
+  color: #ffffff !important;
+}
+
+/* Error dialog buttons */
+.error-dialog-actions .btn-primary {
+  color: #ffffff !important;
+}
+
+/* Language selector active option */
+.language-option.active {
+  color: #ffffff !important;
+}
+
+/* AI toolbar buttons */
+.ai-toolbar .toolbar-btn.active,
+.ai-toolbar button[class*="primary"] {
+  color: #ffffff !important;
+}
+
+/* Generic accent background elements */
+[style*="background"][style*="accent"],
+[style*="background"][style*="primary"],
+[style*="background-color"][style*="accent"],
+[style*="background-color"][style*="primary"] {
+  color: #ffffff !important;
+}
+
+/* Light mode specific fixes */
+[data-theme="light"] .btn-primary,
+[data-theme="light"] .btn-danger,
+[data-theme="light"] .btn-success,
+[data-theme="light"] .btn-warning,
+[data-theme="light"] button[class*="primary"],
+[data-theme="light"] a[class*="primary"],
+[data-theme="light"] .badge-count {
+  color: #ffffff !important;
+}
+
+/* Auto light mode fixes */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .btn-primary,
+  :root:not([data-theme]) .btn-danger,
+  :root:not([data-theme]) .btn-success,
+  :root:not([data-theme]) .btn-warning,
+  :root:not([data-theme]) button[class*="primary"],
+  :root:not([data-theme]) a[class*="primary"],
+  :root:not([data-theme]) .badge-count {
+    color: #ffffff !important;
+  }
+}

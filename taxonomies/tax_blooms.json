@@ -1,0 +1,226 @@
+{
+  "id": "tax_blooms",
+  "name": "Bloom's Revised Taxonomy",
+  "description": "Six-level cognitive hierarchy from knowledge recall to creative synthesis. The most widely used framework for educational objectives.",
+  "taxonomy_type": "linear",
+  "is_system_preset": true,
+  "levels": [
+    {
+      "id": "bloom_remember",
+      "name": "Remember",
+      "value": "remember",
+      "description": "Retrieve relevant knowledge from long-term memory",
+      "order": 1,
+      "example_verbs": [
+        "define",
+        "list",
+        "recall",
+        "identify",
+        "name",
+        "recognize",
+        "state",
+        "match"
+      ],
+      "color": "#E57373"
+    },
+    {
+      "id": "bloom_understand",
+      "name": "Understand",
+      "value": "understand",
+      "description": "Construct meaning from instructional messages",
+      "order": 2,
+      "example_verbs": [
+        "explain",
+        "describe",
+        "summarize",
+        "interpret",
+        "classify",
+        "compare",
+        "discuss",
+        "paraphrase"
+      ],
+      "color": "#FFB74D"
+    },
+    {
+      "id": "bloom_apply",
+      "name": "Apply",
+      "value": "apply",
+      "description": "Carry out or use a procedure in a given situation",
+      "order": 3,
+      "example_verbs": [
+        "use",
+        "implement",
+        "execute",
+        "solve",
+        "demonstrate",
+        "apply",
+        "perform",
+        "calculate"
+      ],
+      "color": "#FFF176"
+    },
+    {
+      "id": "bloom_analyze",
+      "name": "Analyze",
+      "value": "analyze",
+      "description": "Break material into parts and determine relationships",
+      "order": 4,
+      "example_verbs": [
+        "analyze",
+        "differentiate",
+        "organize",
+        "examine",
+        "compare",
+        "contrast",
+        "investigate",
+        "deconstruct"
+      ],
+      "color": "#81C784"
+    },
+    {
+      "id": "bloom_evaluate",
+      "name": "Evaluate",
+      "value": "evaluate",
+      "description": "Make judgments based on criteria and standards",
+      "order": 5,
+      "example_verbs": [
+        "evaluate",
+        "judge",
+        "critique",
+        "assess",
+        "justify",
+        "defend",
+        "argue",
+        "recommend"
+      ],
+      "color": "#64B5F6"
+    },
+    {
+      "id": "bloom_create",
+      "name": "Create",
+      "value": "create",
+      "description": "Put elements together to form a coherent whole or new product",
+      "order": 6,
+      "example_verbs": [
+        "create",
+        "design",
+        "construct",
+        "develop",
+        "compose",
+        "produce",
+        "formulate",
+        "invent"
+      ],
+      "color": "#BA68C8"
+    }
+  ],
+  "activity_mappings": [
+    {
+      "activity_type": "video_lecture",
+      "compatible_levels": [
+        "remember",
+        "understand",
+        "apply"
+      ],
+      "primary_levels": [
+        "understand"
+      ]
+    },
+    {
+      "activity_type": "reading_material",
+      "compatible_levels": [
+        "remember",
+        "understand",
+        "apply",
+        "analyze"
+      ],
+      "primary_levels": [
+        "understand",
+        "remember"
+      ]
+    },
+    {
+      "activity_type": "hands_on_lab",
+      "compatible_levels": [
+        "apply",
+        "analyze",
+        "evaluate",
+        "create"
+      ],
+      "primary_levels": [
+        "apply",
+        "analyze"
+      ]
+    },
+    {
+      "activity_type": "graded_quiz",
+      "compatible_levels": [
+        "remember",
+        "understand",
+        "apply",
+        "analyze"
+      ],
+      "primary_levels": [
+        "remember",
+        "understand"
+      ]
+    },
+    {
+      "activity_type": "practice_quiz",
+      "compatible_levels": [
+        "remember",
+        "understand",
+        "apply"
+      ],
+      "primary_levels": [
+        "remember",
+        "understand"
+      ]
+    },
+    {
+      "activity_type": "assignment_submission",
+      "compatible_levels": [
+        "apply",
+        "analyze",
+        "evaluate",
+        "create"
+      ],
+      "primary_levels": [
+        "apply",
+        "analyze"
+      ]
+    },
+    {
+      "activity_type": "project_milestone",
+      "compatible_levels": [
+        "analyze",
+        "evaluate",
+        "create"
+      ],
+      "primary_levels": [
+        "create",
+        "evaluate"
+      ]
+    },
+    {
+      "activity_type": "discussion_prompt",
+      "compatible_levels": [
+        "understand",
+        "apply",
+        "analyze",
+        "evaluate"
+      ],
+      "primary_levels": [
+        "analyze",
+        "evaluate"
+      ]
+    }
+  ],
+  "require_progression": true,
+  "allow_regression_within": 1,
+  "minimum_unique_levels": 2,
+  "require_higher_order": true,
+  "higher_order_threshold": 4,
+  "created_at": "2026-02-16T21:41:31.195387",
+  "updated_at": "2026-02-16T21:41:31.195395"
+}

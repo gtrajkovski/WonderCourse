@@ -1,0 +1,17 @@
+{#
+  Help Panel Partial
+  Usage: {% include 'partials/help-panel.html' %}
+  JavaScript handles opening/closing and loading content
+#}
+
+<div id="help-panel" class="help-panel">
+  <div class="help-panel-header">
+    <h2 class="help-panel-title" id="help-panel-title" data-i18n="common.help">Help</h2>
+    <button class="help-panel-close" aria-label="Close help panel" onclick="window.help && window.help.hidePanel()">
+      &times;
+    </button>
+  </div>
+  <div class="help-panel-content" id="help-panel-content">
+    <p data-i18n="help.selectTopic">Select a topic from the menu or click a help button.</p>
+  </div>
+</div>

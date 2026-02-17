@@ -1,0 +1,53 @@
+<!-- Message template -->
+<template id="message-template">
+    <div class="message">
+        <div class="message-avatar">
+            <span class="avatar-icon"></span>
+        </div>
+        <div class="message-content">
+            <div class="message-header">
+                <span class="message-author"></span>
+                <span class="message-timestamp"></span>
+            </div>
+            <div class="message-text"></div>
+            <div class="message-evaluation" style="display: none;">
+                <span class="eval-badge"></span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Typing indicator template -->
+<template id="typing-indicator-template">
+    <div class="typing-indicator">
+        <div class="message-avatar">
+            <span class="avatar-icon">🧑‍🏫</span>
+        </div>
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</template>
+
+<!-- Session summary template -->
+<template id="session-summary-template">
+    <div class="summary-evaluation">
+        <h3 data-i18n="coachSession.overallEvaluation">Overall Evaluation</h3>
+        <div class="overall-level"></div>
+        <div class="summary-scores"></div>
+    </div>
+    <div class="summary-insights">
+        <h3 data-i18n="coachSession.keyInsights">Key Insights</h3>
+        <ul class="insights-list"></ul>
+    </div>
+    <div class="summary-recommendations">
+        <h3 data-i18n="coachSession.recommendations">Recommendations</h3>
+        <ul class="recommendations-list"></ul>
+    </div>
+    <div class="summary-coverage">
+        <h3 data-i18n="coachSession.topicCoverage">Topic Coverage</h3>
+        <div class="coverage-details"></div>
+    </div>
+</template>

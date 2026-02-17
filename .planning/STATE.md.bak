@@ -1,0 +1,344 @@
+# Course Builder Studio - Project State
+
+## Current Position
+
+**Phase:** 4 of 10 (Core Content Generation)
+**Plan:** 5 of 7 (RubricGenerator)
+**Status:** In progress
+**Last activity:** 2026-02-04 - Completed 04-05-PLAN.md (RubricGenerator with 3-level scoring)
+
+**Progress:** ███████████████░░░░░░░░░░░░░░░░░ 16/52 total plans (31%)
+
+## Executive Summary
+
+Course Builder Studio is being built to transform educational content into complete online courses with AI-driven curriculum design, assessment generation, and content scaffolding.
+**Current milestone:** Phase 4 Plan 5 Complete - RubricGenerator with 3-level scoring
+**Current milestone:** Phase 4 Plan 5 Complete - RubricGenerator with distractor quality checks
+**Latest completion:** RubricGenerator extending BaseGenerator with Below/Meets/Exceeds Expectations model and weight validation
+**Latest completion:** RubricGenerator extending BaseGenerator with 3-level scoring best practices, option-level feedback, and answer distribution validation
+
+## Accumulated Decisions
+
+| Decision | Impact | Phase-Plan | Rationale |
+|----------|--------|------------|-----------|
+| validate_answer_distribution as static method | Reusable quiz quality checks without instantiation | 04-04 | Enables validation of quizzes from any source, not just generator |
+| 50% threshold for balanced distribution | Prevents obvious answer patterns in MCQ quizzes | 04-04 | Industry standard - allows natural clustering while avoiding bias |
+| Quiz word count includes all option text | Accurate duration estimates for quiz completion | 04-04 | Learners read all options, not just correct answer |
+| Distractor quality emphasized in prompt | Plausible distractors based on misconceptions | 04-04 | Critical for valid assessment - prevents test-wise guessing |
+| BaseGenerator as ABC with Generic[T] | Type-safe schema validation for all generators | 04-01 | Ensures all generators work with validated Pydantic schemas |
+| ContentMetadata uses industry-standard rates | Deterministic duration calculations (238 WPM reading, 150 WPM video, 1.5 min/quiz) | 04-01 | Accurate course duration estimates from research-backed rates |
+| VideoScriptSchema with 6 distinct fields | WWHAA structure enforced at schema level | 04-01 | Impossible to generate video without all required sections |
+| QuizOption with is_correct field | Natural answer position variation | 04-01 | Correct answer not always first, simpler validation logic |
+| RubricSchema uses 3-level scoring | Below/Meets/Exceeds Expectations model | 04-01 | Research shows 3-level rubrics clearer than 5+ levels |
+| Review-before-commit workflow | Blueprints are proposals until explicitly accepted | 03-03 | User sees validation feedback and can refine before committing |
+| Validation runs twice | At generate (informational) and accept (blocking) | 03-03 | Enables user to see issues and refine before committing |
+| Refine endpoint prompt strategy | Includes previous blueprint + feedback in prompt | 03-03 | Maintains context while incorporating user refinements |
+| API error handling conventions | 400 bad input, 404 not found, 422 validation failed, 502 AI error, 503 AI unavailable | 03-03 | Consistent status codes across all endpoints |
+| Use output_config parameter | NOT response_format for Claude structured outputs | 03-01 | Anthropic SDK v0.77.0+ uses output_config.format parameter |
+| BlueprintGenerator creates own client | Not using AIClient to avoid history pollution | 03-01 | Stateless generator needs one-shot outputs, not conversations |
+| Keep existing Pydantic models | Preserve 03-02's working models, only add fields | 03-01 | Avoid breaking changes from parallel execution |
+| MAX_TOKENS 8192 for blueprints | Large responses need generous token limit | 03-01 | Complete blueprints are 2-3 modules with nested structure |
+| Pydantic validates structure only | CourseraValidator validates business rules | 03-02 | Separation of concerns; better error messages from Python |
+| Relaxed Pydantic constraints | Allows CourseraValidator to catch domain errors | 03-02 | Forward compatibility, clearer validation feedback |
+| Enum mapping with fallbacks | try/except pattern for unknown values | 03-02 | Schema evolution without crashes |
+| All converted activities start DRAFT | BuildState.DRAFT for blueprint conversions | 03-02 | Blueprint is structure only; content not generated |
+| Use python-dotenv for config | All config loaded from .env | 01-01 | Standard Python pattern, prevents hardcoding secrets |
+| Default to claude-sonnet-4-20250514 | All AI operations use this model | 01-01 | Balances cost, speed, capability for course generation |
+| Projects stored in projects/ dir | Runtime data isolated from code | 01-01 | Simple relative path, clear code/data separation |
+| ID generation with typed prefixes | All IDs self-documenting (act_, les_, mod_, etc.) | 01-02 | Type identification from ID alone, debugging clarity |
+| Timestamps as ISO strings | JSON-compatible without custom encoders | 01-02 | Cross-language compatibility, direct serialization |
+| Enum deserialization fallback | Schema evolution without crashes | 01-02 | Backward compatibility when enum values change |
+| Known field filtering in from_dict | Forward compatibility for new fields | 01-02 | Seamless schema evolution without migrations |
+| Lock file mechanism for concurrency | Prevents JSON corruption from concurrent writes | 01-03 | Cross-platform, simpler than platform-specific locks |
+| Auto-create subdirectories on save | Generators can assume exports/ and textbook/ exist | 01-03 | Reduces error checking in downstream code |
+| Auto-update timestamps on save | Accurate change tracking without manual intervention | 01-03 | Reliable sorting in list_courses() |
+| Dual AI client architecture | Separate conversational and one-shot clients | 01-04 | Prevents history pollution in batch operations |
+| Catch all exceptions for history rollback | Generic exception handling ensures consistency | 01-04 | Critical for maintaining history state on any error |
+| Mocked API tests | Use pytest-mock to avoid real API calls | 01-04 | Fast tests, no API costs during development |
+| Flask app on port 5003 | Avoids conflicts with existing apps | 01-05 | Parallel development of all applications |
+| AIClient optional initialization | try/except with None fallback | 01-05 | App runs without API key for UI development |
+| Dark theme color palette | #1a1a2e bg, #16213e cards, #4da6ff accent | 01-05 | Professional look, reduces eye strain |
+| Server-side rendering + client CRUD | Jinja2 templates + fetch API | 01-05 | Fast initial load, progressive enhancement |
+| Test isolation with temp ProjectStore | Monkeypatch module-level singleton | 01-05 | Fast, reliable, isolated tests |
+| Prerequisites as freeform text | Optional[str] for flexible prerequisite descriptions | 02-01 | Simplicity over structure, can be parsed later if needed |
+| Tools as list of strings | List[str] maintains order and allows iteration | 02-01 | Multiple tools common in courses |
+| Build state computed from activities | empty → draft → in_progress → complete | 02-01 | Actionable status for dashboard without manual tracking |
+| Status computation on-the-fly | No caching in list endpoint | 02-01 | Simple, always accurate; optimize later if needed |
+| Blueprint init pattern with module var | init_bp(store) sets module-level _project_store | 02-02 | Blueprint needs store but created at import time |
+| Cascading cleanup on module delete | Remove activity IDs from outcome mappings | 02-02 | Maintains referential integrity without DB constraints |
+| Renumber after reorder | All modules get order = i after reorder | 02-02 | Order values always match list indices |
+| 2-level URL nesting for nested resources | Update/delete use courses/<id>/lessons/<lid> not courses/<id>/modules/<mid>/lessons/<lid> | 02-03 | Keeps URLs clean, IDs are globally unique |
+| Helper functions for traversing course structure | _find_lesson() and _find_activity() locate nested resources by ID | 02-03 | Enables 2-level URLs while maintaining data model |
+| Enum validation in API endpoints | try/except blocks for ContentType, ActivityType, etc. with 400 errors | 02-03 | Clear feedback for invalid enum values |
+| Cascading cleanup on lesson/activity delete | Remove activity IDs from outcome mappings | 02-03 | Maintains referential integrity |
+| BloomLevel enum validation with helpful errors | Invalid bloom_level returns 400 with list of valid values | 02-04 | Self-documenting API, improves developer experience |
+| Default bloom_level to APPLY | Consistent with LearningOutcome model default | 02-04 | APPLY most common for hands-on technical courses |
+| Support partial updates in PUT | Any combination of fields accepted | 02-04 | REST best practices, reduces payload size |
+| Unidirectional mapping storage | LearningOutcome.mapped_activity_ids holds mappings | 02-05 | Single source of truth, simpler than bidirectional |
+| Idempotent mapping operations | Map/unmap can be called repeatedly safely | 02-05 | Resilient to retries, simpler client code |
+| Dynamic coverage calculation | Alignment score computed on-the-fly | 02-05 | Always accurate, no caching complexity |
+
+## Phase 1 Progress
+
+**Phase objective:** Establish core infrastructure (config, models, AI client, Flask app, tests)
+
+**Plans:**
+- [x] 01-01: Configuration system ✅
+- [x] 01-02: Core data models (Course, Module, Lesson) ✅
+- [x] 01-03: ProjectStore with file locking ✅
+- [x] 01-04: AI client infrastructure ✅
+- [x] 01-05: Flask application skeleton ✅
+
+**Completed:** 5/5 plans
+
+## Phase 2 Progress
+
+**Phase objective:** Build REST API for course structure management (modules, lessons, activities, outcomes)
+
+**Plans:**
+- [x] 02-01: Enhanced course metadata ✅
+- [x] 02-02: Module CRUD API ✅
+- [x] 02-03: Lesson/Activity CRUD API ✅
+- [x] 02-04: Learning Outcomes CRUD API ✅
+- [x] 02-05: Outcome-Activity Mapping API ✅
+
+**Completed:** 5/5 plans (Phase complete!)
+
+## Phase 3 Progress
+
+**Phase objective:** Build AI-powered blueprint generation system (generator, validator, converter, API)
+
+**Plans:**
+- [x] 03-01: BlueprintGenerator with Pydantic schemas ✅ (7 tests)
+- [x] 03-02: CourseraValidator + blueprint converter ✅ (18 tests)
+- [x] 03-03: Blueprint API endpoints ✅ (13 tests)
+
+**Completed:** 3/3 plans (Phase complete!)
+
+## Phase 4 Progress
+
+**Phase objective:** Build core content generation (video scripts, readings, quizzes, rubrics)
+
+**Plans:**
+- [x] 04-01: BaseGenerator ABC + ContentMetadata + 4 Pydantic schemas ✅ (16 tests)
+- [ ] 04-02: VideoScriptGenerator with WWHAA structure (TDD)
+- [ ] 04-03: ReadingGenerator with APA 7 citations (TDD)
+- [x] 04-05: RubricGenerator with 3-level scoring criteria (TDD) ✅ (8 tests)
+- [ ] 04-05: RubricGenerator with 3-level scoring criteria (TDD)
+- [ ] 04-06: Content generation API endpoints + regeneration workflow
+- [ ] 04-07: Build state tracking API + progress endpoint
+**Completed:** 3/7 plans
+**Completed:** 2/7 plans
+
+## Blockers and Concerns
+
+**Current blockers:** None
+
+**Prerequisites for Phase 4:**
+- User must add ANTHROPIC_API_KEY to .env file for AI content generation
+- All dependencies installed (Flask, anthropic, pydantic, pytest-mock)
+
+**Technical debt:** None
+
+**Risks:** None identified
+
+## Session Continuity
+
+**Last session:** 2026-02-04
+**Stopped at:** Completed 04-04-PLAN.md
+**Next action:** Continue Phase 4 - Plans 02, 03, 06-07 (VideoScript, Reading generators, then API endpoints)
+**Next action:** Continue Phase 4 - Plans 02, 03, 05 (Wave 2: remaining generators)
+
+## Alignment with Vision
+
+**Vision alignment:** On track - foundational infrastructure complete and ready for feature development
+
+**Scope adherence:** Within scope - no feature creep
+
+**Quality gates:**
+- ✅ Configuration system tested (11 passing tests)
+- ✅ Core data models tested (32 passing tests)
+- ✅ ProjectStore persistence tested (15 passing tests)
+- ✅ AI client infrastructure tested (17 passing tests)
+- ✅ Flask web application tested (24 passing tests)
+- ✅ Module CRUD API tested (9 passing tests)
+- ✅ Lesson/Activity CRUD API tested (15 passing tests)
+- ✅ Learning Outcomes CRUD API tested (9 passing tests)
+- ✅ Outcome-Activity Mapping API tested (10 passing tests)
+- ✅ BlueprintGenerator tested (7 tests, all passing)
+- ✅ Blueprint validator tested (10 tests, all passing)
+- ✅ Blueprint converter tested (8 tests, all passing)
+- ✅ Blueprint API tested (13 tests, all passing)
+- ✅ BaseGenerator ABC tested (importable, follows BlueprintGenerator pattern)
+- ✅ ContentMetadata utility tested (16 tests, all passing)
+- ✅ All 4 Pydantic schemas tested (importable, produce valid JSON schemas)
+- ✅ QuizGenerator tested (8 tests, all passing)
+- ✅ All tests passing (204 tests)
+- ✅ Git repository properly configured
+- ✅ Phase 1 complete (5/5 plans)
+- ✅ Phase 2 complete (5/5 plans)
+- ✅ Phase 3 complete (3/3 plans)
+
+## Key Artifacts
+
+**Config & Setup:**
+- `src/config.py` - Configuration class with environment variables
+- `requirements.txt` - Python dependencies
+- `.env.example` - Environment variable template
+- `.gitignore` - Git exclusion rules
+- `pytest.ini` - Test configuration
+
+**Data Models:**
+- `src/core/models.py` - Core data models (6 dataclasses, 5 enums)
+  - Course, Module, Lesson, Activity, LearningOutcome, TextbookChapter
+  - ContentType, ActivityType, BuildState, BloomLevel, WWHAAPhase enums
+
+**Persistence:**
+- `src/core/project_store.py` - ProjectStore with file locking (238 lines)
+  - Save/load/list/delete operations
+  - Lock file mechanism for concurrency safety
+  - Path traversal protection
+  - Auto-creates exports/ and textbook/ subdirectories
+
+**AI Client:**
+- `src/ai/client.py` - Conversational AI client (195 lines)
+  - chat(), chat_stream(), generate(), clear_history() methods
+  - Conversation history management with error rollback
+  - Streaming support for real-time responses
+- `src/utils/ai_client.py` - One-shot stateless client (55 lines)
+  - generate() function for batch operations
+  - No conversation state
+
+**Web Application:**
+- `app.py` - Flask web application (236 lines)
+  - Page routes: /, /dashboard
+  - REST API: GET/POST /api/courses, GET/PUT/DELETE /api/courses/<id>
+  - Enhanced GET /api/courses with status indicators (lesson_count, activity_count, build_state)
+  - Health check: GET /api/system/health
+  - Blueprint registration for modular API organization
+  - Module-level singletons: Flask app, ProjectStore, AIClient (optional)
+- `src/api/modules.py` - Module CRUD Blueprint (287 lines)
+  - GET /api/courses/<id>/modules (list)
+  - POST /api/courses/<id>/modules (create)
+  - PUT /api/courses/<id>/modules/<mid> (update)
+  - DELETE /api/courses/<id>/modules/<mid> (delete with cascading cleanup)
+  - PUT /api/courses/<id>/modules/reorder (reorder)
+- `src/api/lessons.py` - Lesson CRUD Blueprint (323 lines)
+  - GET /api/courses/<id>/modules/<mid>/lessons (list)
+  - POST /api/courses/<id>/modules/<mid>/lessons (create)
+  - PUT /api/courses/<id>/lessons/<lid> (update)
+  - DELETE /api/courses/<id>/lessons/<lid> (delete with cascading cleanup)
+  - PUT /api/courses/<id>/modules/<mid>/lessons/reorder (reorder)
+- `src/api/activities.py` - Activity CRUD Blueprint (428 lines)
+  - GET /api/courses/<id>/lessons/<lid>/activities (list)
+  - POST /api/courses/<id>/lessons/<lid>/activities (create)
+  - PUT /api/courses/<id>/activities/<aid> (update with enum validation)
+  - DELETE /api/courses/<id>/activities/<aid> (delete with cascading cleanup)
+  - PUT /api/courses/<id>/lessons/<lid>/activities/reorder (reorder)
+- `src/api/lessons.py` - Lesson CRUD Blueprint
+  - Lesson management within modules
+- `src/api/learning_outcomes.py` - Learning Outcome CRUD + Mapping Blueprint (477 lines)
+  - GET /api/courses/<id>/outcomes (list)
+  - POST /api/courses/<id>/outcomes (create with ABCD + Bloom's)
+  - PUT /api/courses/<id>/outcomes/<oid> (update)
+  - DELETE /api/courses/<id>/outcomes/<oid> (delete)
+  - POST /api/courses/<id>/outcomes/<oid>/map (map to activity)
+  - DELETE /api/courses/<id>/outcomes/<oid>/map/<aid> (unmap from activity)
+  - GET /api/courses/<id>/alignment (alignment matrix with coverage)
+  - GET /api/courses/<id>/activities/<aid>/outcomes (reverse lookup)
+- `src/api/blueprint.py` - Blueprint Generation API Blueprint (340 lines)
+  - POST /api/courses/<id>/blueprint/generate (AI blueprint generation with validation)
+  - POST /api/courses/<id>/blueprint/accept (validate and apply blueprint to course)
+  - POST /api/courses/<id>/blueprint/refine (regenerate with user feedback)
+
+**Content Generation:**
+- `src/generators/base_generator.py` - Abstract base class for content generators (126 lines)
+  - Generic[T] type-safe schema validation
+  - generate() method orchestrating prompt building, API call, validation, metadata extraction
+  - Abstract methods: system_prompt, build_user_prompt, extract_metadata
+- `src/utils/content_metadata.py` - Content metadata calculations (78 lines)
+  - count_words(), estimate_reading_duration(), estimate_video_duration(), estimate_quiz_duration()
+  - Industry-standard rates: 238 WPM reading, 150 WPM video, 1.5 min per quiz question
+- `src/generators/schemas/__init__.py` - Schema package exports
+- `src/generators/schemas/video_script.py` - VideoScriptSchema with WWHAA structure
+  - 6 distinct section fields (hook, objective, content, ivq, summary, cta)
+  - Enforces complete WWHAA structure at schema level
+- `src/generators/schemas/reading.py` - ReadingSchema with sections and APA 7 references
+  - Introduction, sections (2-6), conclusion, references (1-5)
+- `src/generators/schemas/quiz.py` - QuizSchema with Bloom's taxonomy
+  - QuizQuestion with bloom_level field
+  - QuizOption with is_correct and feedback fields
+- `src/generators/schemas/rubric.py` - RubricSchema with 3-level scoring
+  - RubricCriterion with Below/Meets/Exceeds Expectations descriptions
+  - Weight percentages for criteria
+
+**UI:**
+- `templates/base.html` - Dark-theme base layout with nav, content block, footer
+- `templates/dashboard.html` - Course list page with cards, empty state, inline CRUD
+- `static/css/main.css` - Dark theme CSS (bg #1a1a2e, cards #16213e, accent #4da6ff)
+
+**Tests:**
+- `tests/test_config.py` - Config class tests (11 tests, all passing)
+- `tests/test_models.py` - Data model tests (28 tests, all passing)
+- `tests/test_project_store.py` - ProjectStore tests (15 tests, all passing)
+- `tests/test_ai_client.py` - AI client tests (17 tests, all passing with mocked API)
+- `tests/test_app.py` - Flask integration tests (24 tests, all passing)
+- `tests/test_modules_api.py` - Module API tests (9 tests, all passing)
+- `tests/test_lessons_api.py` - Lesson API tests
+- `tests/test_learning_outcomes_api.py` - Learning Outcome API tests (9 tests, all passing)
+- `tests/test_outcome_mapping_api.py` - Outcome-Activity Mapping API tests (10 tests, all passing)
+- `tests/test_blueprint_api.py` - Blueprint API tests (13 tests, all passing)
+- `tests/test_content_metadata.py` - ContentMetadata utility tests (16 tests, all passing)
+- `tests/conftest.py` - Shared pytest fixtures (tmp_store, sample_course, client)
+
+**Planning:**
+- `.planning/phases/01-foundation-infrastructure/01-01-SUMMARY.md` - Configuration system summary
+- `.planning/phases/01-foundation-infrastructure/01-02-SUMMARY.md` - Data models summary
+- `.planning/phases/01-foundation-infrastructure/01-03-SUMMARY.md` - ProjectStore summary
+- `.planning/phases/01-foundation-infrastructure/01-04-SUMMARY.md` - AI client infrastructure summary
+- `.planning/phases/01-foundation-infrastructure/01-05-SUMMARY.md` - Flask application summary
+- `.planning/phases/02-course-management/02-01-SUMMARY.md` - Enhanced course metadata summary
+- `.planning/phases/02-course-management/02-02-SUMMARY.md` - Module CRUD API summary
+- `.planning/phases/02-course-management/02-03-SUMMARY.md` - Lesson & Activity CRUD API summary
+- `.planning/phases/02-course-management/02-03-SUMMARY.md` - Lesson CRUD API summary
+- `.planning/phases/02-course-management/02-04-SUMMARY.md` - Learning Outcomes CRUD API summary
+- `.planning/phases/02-course-management/02-05-SUMMARY.md` - Outcome-Activity Mapping API summary
+- `.planning/phases/03-blueprint-generation/03-01-SUMMARY.md` - BlueprintGenerator with Pydantic schemas summary
+- `.planning/phases/03-blueprint-generation/03-02-SUMMARY.md` - CourseraValidator + blueprint converter summary
+- `.planning/phases/03-blueprint-generation/03-03-SUMMARY.md` - Blueprint API endpoints summary
+- `.planning/phases/04-core-content-generation/04-01-SUMMARY.md` - BaseGenerator ABC + ContentMetadata + 4 Pydantic schemas summary
+
+## Tech Stack
+
+**Core:**
+- Python 3.9+
+- Flask 3.1.0+ (web framework)
+- anthropic 0.77.0+ (AI client)
+- python-dotenv 1.0.1+ (environment variables)
+- pydantic 2.10.0+ (schema validation)
+
+**Testing:**
+- pytest 9.0.0+
+- pytest-flask 1.3.0+
+- pytest-mock 3.15.0+
+
+**Patterns:**
+- Centralized configuration class
+- Environment variable-based secrets
+- Atomic git commits per task
+- TDD with RED-GREEN-REFACTOR cycle
+- Recursive serialization for nested objects
+- Schema evolution via field filtering
+- Repository pattern for data persistence
+- Lock file mechanism for concurrency control
+- Dual AI client architecture (conversational + one-shot)
+- Conversation history management with error rollback
+- Mocked API testing with pytest-mock
+- Flask app factory pattern with module-level singletons
+- Flask Blueprint pattern for modular APIs
+- Blueprint initialization with module-level variable
+- Atomic load/modify/save for persistence
+- Cascading cleanup on delete operations
+- Jinja2 template inheritance (base.html → page templates)
+- REST API with consistent error responses
+- Test isolation via temporary ProjectStore fixture

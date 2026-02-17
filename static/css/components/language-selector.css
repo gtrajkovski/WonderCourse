@@ -1,0 +1,138 @@
+/* Language Selector Component */
+
+.language-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.language-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--transition-timing);
+}
+
+.language-selector-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-medium);
+}
+
+.language-selector-btn:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.language-icon {
+  font-size: 1rem;
+}
+
+.language-name {
+  font-weight: 500;
+}
+
+.language-arrow {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  transition: transform var(--transition-fast);
+}
+
+.language-dropdown.open + .language-selector-btn .language-arrow,
+.language-selector-btn[aria-expanded="true"] .language-arrow {
+  transform: rotate(180deg);
+}
+
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 180px;
+  padding: 4px 0;
+  margin: 0;
+  list-style: none;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all var(--transition-fast) var(--transition-timing);
+  z-index: var(--z-dropdown);
+}
+
+.language-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.language-dropdown li {
+  margin: 0;
+  padding: 0;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.language-option:hover {
+  background: var(--bg-hover);
+}
+
+.language-option.active {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.language-option.active:hover {
+  background: var(--accent-hover);
+}
+
+.language-option-native {
+  font-weight: 500;
+}
+
+.language-option-name {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+
+.language-option.active .language-option-name {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.language-check {
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+
+/* RTL support */
+[dir="rtl"] .language-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .language-option-name {
+  margin-left: 0;
+  margin-right: 8px;
+}

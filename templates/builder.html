@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Builder - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/builder.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="builder">
+    <!-- Tree Panel (Left) -->
+    <div class="tree-panel">
+        <div class="panel-header">
+            <h2><span data-i18n="builder.courseStructure">Course Structure</span>
+                <button class="help-btn" data-help="course-structure" title="Learn about course structure">?</button>
+            </h2>
+            <button class="btn btn-primary btn-small" id="btn-add-module" data-i18n="builder.addModuleShort" title="Add a new module">+ Module</button>
+        </div>
+        <div class="tree-container" id="course-tree">
+            <!-- Tree will be rendered by JavaScript -->
+        </div>
+        <div class="tree-actions">
+            <button class="btn btn-ghost btn-small" id="btn-expand-all" data-i18n="builder.expandAll" title="Expand all modules and lessons">Expand All</button>
+            <button class="btn btn-ghost btn-small" id="btn-collapse-all" data-i18n="builder.collapseAll" title="Collapse all modules and lessons">Collapse All</button>
+        </div>
+    </div>
+
+    <!-- Detail Panel (Right) -->
+    <div class="detail-panel" id="detail-panel">
+        <div class="detail-empty" id="detail-empty">
+            <div class="empty-icon">📋</div>
+            <p data-i18n="builder.selectItem">Select an item from the tree to view and edit its details.</p>
+        </div>
+
+        <!-- Module Detail View (hidden by default) -->
+        <div class="detail-view" id="detail-module" style="display: none;">
+            <div class="panel-header">
+                <h3 class="detail-title" id="module-title" data-i18n="builder.moduleTitle">Module Title</h3>
+            </div>
+            <div class="detail-content">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="builder.title">Title</label>
+                    <input type="text" id="module-title-input" class="form-input inline-edit" data-field="title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="builder.description">Description</label>
+                    <textarea id="module-description-input" class="form-textarea inline-edit" rows="3" data-field="description" data-i18n-placeholder="builder.addDescription" placeholder="Add a description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><span data-i18n="builder.flowMode">Flow Mode</span>
+                        <button class="help-btn" data-help="flow-mode" title="Learn about flow modes">?</button>
+                    </label>
+                    <select id="module-flow-mode-select" class="form-select inline-edit" data-field="flow_mode">
+                        <option value="sequential" data-i18n="builder.sequential">Sequential - Learners must complete in order</option>
+                        <option value="open" data-i18n="builder.open">Open - Learners can access in any order</option>
+                    </select>
+                </div>
+                <div class="detail-meta">
+                    <span class="meta-item"><strong data-i18n="builder.order">Order:</strong> <span id="module-order">1</span></span>
+                    <span class="meta-item"><strong data-i18n="builder.lessons">Lessons:</strong> <span id="module-lesson-count">0</span></span>
+                </div>
+                <div class="detail-actions">
+                    <button class="btn btn-primary btn-small" id="btn-add-lesson" data-i18n="builder.addLesson" title="Add a new lesson to this module">+ Add Lesson</button>
+                    <button class="btn btn-danger btn-small" id="btn-delete-module" data-i18n="builder.deleteModule" title="Delete this module and all its lessons">Delete Module</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson Detail View (hidden by default) -->
+        <div class="detail-view" id="detail-lesson" style="display: none;">
+            <div class="panel-header">
+                <h3 class="detail-title" id="lesson-title" data-i18n="builder.lessonTitle">Lesson Title</h3>
+            </div>
+            <div class="detail-content">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="builder.title">Title</label>
+                    <input type="text" id="lesson-title-input" class="form-input inline-edit" data-field="title">
+                </div>
+                <div class="detail-meta">
+                    <span class="meta-item"><strong data-i18n="builder.order">Order:</strong> <span id="lesson-order">1</span></span>
+                    <span class="meta-item"><strong data-i18n="builder.activities">Activities:</strong> <span id="lesson-activity-count">0</span></span>
+                    <span class="meta-item"><strong data-i18n="builder.module">Module:</strong> <span id="lesson-module-name">-</span></span>
+                </div>
+                <div class="detail-actions">
+                    <button class="btn btn-primary btn-small" id="btn-add-activity" data-i18n="builder.addActivity" title="Add a new activity to this lesson">+ Add Activity</button>
+                    <button class="btn btn-danger btn-small" id="btn-delete-lesson" data-i18n="builder.deleteLesson" title="Delete this lesson and all its activities">Delete Lesson</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Detail View (hidden by default) -->
+        <div class="detail-view" id="detail-activity" style="display: none;">
+            <div class="panel-header">
+                <h3 class="detail-title" id="activity-title" data-i18n="builder.activityTitle">Activity Title</h3>
+                <span class="badge" id="activity-state-badge" data-i18n="buildStates.draft">Draft</span>
+            </div>
+            <div class="detail-content">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="builder.title">Title</label>
+                    <input type="text" id="activity-title-input" class="form-input inline-edit" data-field="title">
+                </div>
+                <div class="form-row">
+                    <div class="form-group form-group-half">
+                        <label class="form-label"><span data-i18n="builder.contentType">Content Type</span>
+                            <button class="help-btn" data-help="content-type" title="Learn about content types">?</button>
+                        </label>
+                        <select id="activity-content-type-select" class="form-select inline-edit" data-field="content_type">
+                            <option value="video" data-i18n="contentTypes.video_script">Video</option>
+                            <option value="reading" data-i18n="contentTypes.reading">Reading</option>
+                            <option value="quiz" data-i18n="contentTypes.quiz">Quiz</option>
+                            <option value="discussion" data-i18n="contentTypes.discussion">Discussion</option>
+                            <option value="lab" data-i18n="contentTypes.lab">Lab</option>
+                            <option value="assignment" data-i18n="contentTypes.assignment">Assignment</option>
+                            <option value="project" data-i18n="contentTypes.project">Project</option>
+                            <option value="coach" data-i18n="contentTypes.coach">Coach Dialogue</option>
+                            <option value="hol" data-i18n="contentTypes.hol">Hands-on Lab</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group-half">
+                        <label class="form-label" data-i18n="builder.activityType">Activity Type</label>
+                        <select id="activity-type-select" class="form-select inline-edit" data-field="activity_type">
+                            <option value="video_lecture" data-i18n="activityTypes.lecture">Video Lecture</option>
+                            <option value="reading_material" data-i18n="activityTypes.reading">Reading Material</option>
+                            <option value="graded_quiz" data-i18n="activityTypes.quiz">Graded Quiz</option>
+                            <option value="practice_quiz" data-i18n="activityTypes.practice">Practice Quiz</option>
+                            <option value="hands_on_lab" data-i18n="activityTypes.lab">Hands-On Lab</option>
+                            <option value="ungraded_lab" data-i18n="builder.ungradedLab">Ungraded Lab</option>
+                            <option value="coach_dialogue" data-i18n="contentTypes.coach">Coach Dialogue</option>
+                            <option value="discussion_prompt" data-i18n="activityTypes.discussion">Discussion Prompt</option>
+                            <option value="assignment_submission" data-i18n="activityTypes.assignment">Assignment</option>
+                            <option value="project_milestone" data-i18n="activityTypes.project">Project Milestone</option>
+                            <option value="peer_review" data-i18n="activityTypes.peer_review">Peer Review</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><span data-i18n="builder.wwhaaphase">WWHAA Phase</span>
+                        <button class="help-btn" data-help="wwhaa" title="Learn about WWHAA framework">?</button>
+                    </label>
+                    <select id="activity-wwhaa-select" class="form-select inline-edit" data-field="wwhaa_phase">
+                        <option value="hook" data-i18n="builder.hookEngage">Hook - Engage</option>
+                        <option value="objective" data-i18n="builder.objectiveGoals">Objective - Goals</option>
+                        <option value="content" data-i18n="builder.contentTeach">Content - Teach</option>
+                        <option value="ivq" data-i18n="builder.ivqCheck">IVQ - Check Understanding</option>
+                        <option value="summary" data-i18n="builder.summaryReinforce">Summary - Reinforce</option>
+                        <option value="cta" data-i18n="builder.ctaNext">CTA - Next Steps</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><span data-i18n="builder.prerequisites">Prerequisites</span>
+                        <button class="help-btn" data-help="prerequisites" title="Learn about prerequisites">?</button>
+                    </label>
+                    <div id="activity-prerequisites" class="prerequisites-section">
+                        <div class="prerequisites-list" id="prerequisites-list">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <button type="button" class="btn btn-ghost btn-small" id="btn-add-prerequisite" data-i18n="builder.addPrerequisite">+ Add Prerequisite</button>
+                    </div>
+                </div>
+                <div class="detail-meta">
+                    <span class="meta-item"><strong data-i18n="builder.buildState">Build State:</strong> <span id="activity-build-state">Draft</span></span>
+                    <span class="meta-item"><strong data-i18n="builder.lesson">Lesson:</strong> <span id="activity-lesson-name">-</span></span>
+                </div>
+                <div class="detail-actions">
+                    <button class="btn btn-primary btn-small" id="btn-generate-content" data-i18n="studio.generateContent" title="Open Studio to generate content">Generate Content</button>
+                    <button class="btn btn-danger btn-small" id="btn-delete-activity" data-i18n="builder.deleteActivity" title="Delete this activity">Delete Activity</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Module Modal -->
+<div id="add-module-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="builder.addModule">Add Module</h2>
+        </div>
+        <form id="add-module-form" class="modal-form">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-module-title" class="form-label required" data-i18n="builder.moduleTitle">Module Title</label>
+                    <input type="text" id="new-module-title" name="title" class="form-input" required data-i18n-placeholder="builder.enterModuleTitle" placeholder="Enter module title">
+                    <span class="form-hint" data-i18n="builder.moduleHint">Give your module a descriptive name</span>
+                </div>
+                <div class="form-group">
+                    <label for="new-module-description" class="form-label" data-i18n="builder.description">Description</label>
+                    <textarea id="new-module-description" name="description" class="form-textarea" rows="3" data-i18n-placeholder="builder.optionalDescription" placeholder="Optional description"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-i18n="builder.addModule">Add Module</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Lesson Modal -->
+<div id="add-lesson-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="builder.addLesson">Add Lesson</h2>
+        </div>
+        <form id="add-lesson-form" class="modal-form">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="builder.parentModule">Parent Module</label>
+                    <input type="text" id="lesson-parent-module" class="form-input" disabled>
+                    <input type="hidden" id="lesson-parent-module-id">
+                </div>
+                <div class="form-group">
+                    <label for="new-lesson-title" class="form-label required" data-i18n="builder.lessonTitle">Lesson Title</label>
+                    <input type="text" id="new-lesson-title" name="title" class="form-input" required data-i18n-placeholder="builder.enterLessonTitle" placeholder="Enter lesson title">
+                    <span class="form-hint" data-i18n="builder.lessonHint">Give your lesson a descriptive name</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-i18n="builder.addLesson">Add Lesson</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Activity Modal -->
+<div id="add-activity-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="builder.addActivity">Add Activity</h2>
+        </div>
+        <form id="add-activity-form" class="modal-form">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="builder.parentLesson">Parent Lesson</label>
+                    <input type="text" id="activity-parent-lesson" class="form-input" disabled>
+                    <input type="hidden" id="activity-parent-lesson-id">
+                </div>
+                <div class="form-group">
+                    <label for="new-activity-title" class="form-label required" data-i18n="builder.activityTitle">Activity Title</label>
+                    <input type="text" id="new-activity-title" name="title" class="form-input" required data-i18n-placeholder="builder.enterActivityTitle" placeholder="Enter activity title">
+                </div>
+                <div class="form-group">
+                    <label for="new-activity-content-type" class="form-label required" data-i18n="builder.contentType">Content Type</label>
+                    <select id="new-activity-content-type" name="content_type" class="form-select" required>
+                        <option value="video" data-i18n="contentTypes.video_script">Video</option>
+                        <option value="reading" data-i18n="contentTypes.reading">Reading</option>
+                        <option value="quiz" data-i18n="contentTypes.quiz">Quiz</option>
+                        <option value="discussion" data-i18n="contentTypes.discussion">Discussion</option>
+                        <option value="lab" data-i18n="contentTypes.lab">Lab</option>
+                        <option value="assignment" data-i18n="contentTypes.assignment">Assignment</option>
+                        <option value="project" data-i18n="contentTypes.project">Project</option>
+                        <option value="coach" data-i18n="contentTypes.coach">Coach Dialogue</option>
+                        <option value="hol" data-i18n="contentTypes.hol">Hands-on Lab</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new-activity-type" class="form-label" data-i18n="builder.activityType">Activity Type</label>
+                    <select id="new-activity-type" name="activity_type" class="form-select">
+                        <option value="video_lecture" data-i18n="activityTypes.lecture">Video Lecture</option>
+                        <option value="reading_material" data-i18n="activityTypes.reading">Reading Material</option>
+                        <option value="graded_quiz" data-i18n="activityTypes.quiz">Graded Quiz</option>
+                        <option value="practice_quiz" data-i18n="activityTypes.practice">Practice Quiz</option>
+                        <option value="hands_on_lab" data-i18n="activityTypes.lab">Hands-On Lab</option>
+                        <option value="ungraded_lab" data-i18n="builder.ungradedLab">Ungraded Lab</option>
+                        <option value="coach_dialogue" data-i18n="contentTypes.coach">Coach Dialogue</option>
+                        <option value="discussion_prompt" data-i18n="activityTypes.discussion">Discussion Prompt</option>
+                        <option value="assignment_submission" data-i18n="activityTypes.assignment">Assignment</option>
+                        <option value="project_milestone" data-i18n="activityTypes.project">Project Milestone</option>
+                        <option value="peer_review" data-i18n="activityTypes.peer_review">Peer Review</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-i18n="builder.addActivity">Add Activity</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-confirm-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="builder.confirmDelete">Confirm Delete</h2>
+        </div>
+        <div class="modal-body">
+            <p class="delete-warning"><span data-i18n="builder.deleteConfirmText">Are you sure you want to delete</span> <strong id="delete-item-name"></strong>?</p>
+            <p class="delete-warning" id="delete-cascade-warning" style="display: none;" data-i18n="builder.deleteCascade">This will also delete all nested items.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btn-confirm-delete" data-i18n="common.delete">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Prerequisite Picker Modal -->
+<div id="prerequisite-picker-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 data-i18n="builder.addPrerequisite">Add Prerequisite</h2>
+        </div>
+        <div class="modal-body">
+            <p class="form-hint" data-i18n="builder.selectPrerequisites">Select activities that must be completed before this activity:</p>
+            <div class="prerequisite-picker" id="prerequisite-picker-list">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" id="btn-confirm-prerequisites" data-i18n="builder.savePrerequisites">Save Prerequisites</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/utils/lazy-loader.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/tree.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/builder.js') }}"></script>
+<script>
+    // Initialize builder with course ID
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseId = '{{ course.id }}';
+        window.builderController = new BuilderController(courseId);
+        window.builderController.init();
+    });
+</script>
+{% endblock %}

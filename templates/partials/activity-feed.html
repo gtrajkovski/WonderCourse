@@ -1,0 +1,21 @@
+<!-- Activity Feed - Dropdown panel showing recent course activity -->
+<div id="activity-feed" class="activity-feed">
+  <div class="activity-feed-header">
+    <h3 data-i18n="activity.recentActivity">Recent Activity</h3>
+    <button class="activity-feed-close" aria-label="Close activity feed">&times;</button>
+  </div>
+
+  <div class="activity-filter">
+    <button class="activity-filter-btn active" data-filter="all" data-i18n="common.all">All</button>
+    <button class="activity-filter-btn" data-filter="today" data-i18n="activity.today">Today</button>
+    <button class="activity-filter-btn" data-filter="week" data-i18n="activity.thisWeek">This Week</button>
+  </div>
+
+  <div class="activity-list">
+    <div class="empty-state" data-i18n="activity.noRecentActivity">No recent activity</div>
+  </div>
+
+  <div class="activity-load-more hidden">
+    <button class="btn btn-secondary btn-small load-more-btn" data-i18n="activity.loadMore">Load More</button>
+  </div>
+</div>

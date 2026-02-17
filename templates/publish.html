@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Publish - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/publish.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="publish" data-course-id="{{ course.id }}">
+    <div class="publish-header">
+        <h2 data-i18n="publish.publishCourse">Publish Course</h2>
+        <p class="publish-subtitle" data-i18n="publish.subtitle">Validate, preview, and export your course</p>
+    </div>
+
+    <!-- Section 1: Validation Status -->
+    <section class="validation-section">
+        <div class="section-card">
+            <div class="section-header">
+                <h3><span data-i18n="publish.courseValidation">Course Validation</span>
+                    <button class="help-btn" data-help="validation" data-i18n-title="publish.learnValidation" title="Learn about course validation">?</button>
+                </h3>
+                <button class="btn btn-secondary btn-small" id="btn-refresh-validation" data-i18n-title="publish.rerunValidation" data-i18n="common.refresh" title="Re-run validation checks">
+                    Refresh
+                </button>
+            </div>
+
+            <div id="validation-loading" class="validation-loading">
+                <div class="status-spinner"></div>
+                <span data-i18n="publish.runningValidation">Running validation checks...</span>
+            </div>
+
+            <div id="validation-results" class="validation-results" style="display: none;">
+                <!-- Overall Status -->
+                <div class="validation-summary">
+                    <div class="validation-status-badge" id="validation-status-badge">
+                        <span class="status-icon"></span>
+                        <span class="status-text" data-i18n="publish.checking">Checking...</span>
+                    </div>
+                    <div class="validation-counts" id="validation-counts">
+                        <!-- Error/Warning/Suggestion counts -->
+                    </div>
+                </div>
+
+                <!-- Validator Sections -->
+                <div id="validator-groups" class="validator-groups">
+                    <!-- Rendered by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Export Options -->
+    <section class="export-section">
+        <div class="section-card">
+            <div class="section-header">
+                <h3 data-i18n="publish.exportOptions">Export Options</h3>
+            </div>
+
+            <div class="export-grid" id="export-grid">
+                <!-- Instructor Package -->
+                <div class="export-card" data-format="instructor">
+                    <div class="export-card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="12" y2="10"></line>
+                            <line x1="12" y1="14" x2="12" y2="14"></line>
+                        </svg>
+                    </div>
+                    <div class="export-card-content">
+                        <h4 data-i18n="publish.instructorPackage">Instructor Package</h4>
+                        <p data-i18n="publish.instructorDesc">Complete teaching materials: syllabus, lesson plans, rubrics, quizzes, and answer keys.</p>
+                        <span class="export-format-tag" title="ZIP archive with syllabus, lesson plans, rubrics, and answer keys">ZIP</span>
+                    </div>
+                    <div class="export-card-actions">
+                        <button class="btn btn-secondary btn-small btn-preview" data-format="instructor" data-i18n-title="publish.previewContents" data-i18n="publish.preview" title="Preview package contents">Preview</button>
+                        <button class="btn btn-primary btn-small btn-download" data-format="instructor" data-i18n-title="publish.downloadInstructor" data-i18n="publish.download" title="Download instructor package">Download</button>
+                    </div>
+                </div>
+
+                <!-- LMS Manifest -->
+                <div class="export-card" data-format="lms">
+                    <div class="export-card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="export-card-content">
+                        <h4 data-i18n="publish.lmsManifest">LMS Manifest</h4>
+                        <p data-i18n="publish.lmsDesc">Course structure in JSON format for importing into learning management systems.</p>
+                        <span class="export-format-tag" title="JSON structure for LMS import">JSON</span>
+                    </div>
+                    <div class="export-card-actions">
+                        <button class="btn btn-secondary btn-small btn-preview" data-format="lms" data-i18n-title="publish.previewJson" data-i18n="publish.preview" title="Preview JSON structure">Preview</button>
+                        <button class="btn btn-primary btn-small btn-download" data-format="lms" data-i18n-title="publish.downloadLms" data-i18n="publish.download" title="Download LMS manifest">Download</button>
+                    </div>
+                </div>
+
+                <!-- Textbook -->
+                <div class="export-card" data-format="docx">
+                    <div class="export-card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="export-card-content">
+                        <h4 data-i18n="publish.textbookExport">Textbook</h4>
+                        <p data-i18n="publish.textbookDesc">Complete course content as a formatted Word document for student or instructor reference.</p>
+                        <span class="export-format-tag" title="Word document with chapters and glossary">DOCX</span>
+                    </div>
+                    <div class="export-card-actions">
+                        <button class="btn btn-secondary btn-small btn-preview" data-format="docx" data-i18n-title="publish.previewOutline" data-i18n="publish.preview" title="Preview textbook outline">Preview</button>
+                        <button class="btn btn-primary btn-small btn-download" data-format="docx" data-i18n-title="publish.downloadTextbook" data-i18n="publish.download" title="Download textbook document">Download</button>
+                    </div>
+                </div>
+
+                <!-- SCORM Package -->
+                <div class="export-card" data-format="scorm">
+                    <div class="export-card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <div class="export-card-content">
+                        <h4><span data-i18n="publish.scormPackage">SCORM Package</span>
+                            <button class="help-btn" data-help="scorm" data-i18n-title="publish.learnScorm" title="Learn about SCORM">?</button>
+                        </h4>
+                        <p data-i18n="publish.scormDesc">SCORM 1.2 compliant package for LMS deployment with tracking support.</p>
+                        <span class="export-format-tag" title="SCORM 1.2 compliant package for LMS">ZIP</span>
+                    </div>
+                    <div class="export-card-actions">
+                        <button class="btn btn-secondary btn-small btn-preview" data-format="scorm" data-i18n-title="publish.previewScorm" data-i18n="publish.preview" title="Preview SCORM structure">Preview</button>
+                        <button class="btn btn-primary btn-small btn-download" data-format="scorm" data-i18n-title="publish.downloadScorm" data-i18n="publish.download" title="Download SCORM package">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Preview Modal -->
+<div id="preview-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 id="preview-modal-title" data-i18n="publish.exportPreview">Export Preview</h2>
+        </div>
+        <div class="modal-body">
+            <div id="preview-loading" class="preview-loading">
+                <div class="status-spinner"></div>
+                <span data-i18n="publish.loadingPreview">Loading preview...</span>
+            </div>
+            <div id="preview-content" class="preview-content" style="display: none;">
+                <!-- Preview content rendered here -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.close">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-preview-download" data-i18n="publish.download">Download</button>
+        </div>
+    </div>
+</div>
+
+<!-- Force Export Confirmation Modal -->
+<div id="force-export-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="publish.exportWithIssues">Export with Validation Issues</h2>
+        </div>
+        <div class="modal-body">
+            <p class="force-export-warning" data-i18n="publish.validationWarning">
+                The course has validation issues that may affect the exported content.
+            </p>
+            <div id="force-export-issues" class="force-export-issues">
+                <!-- Issues list rendered here -->
+            </div>
+            <p class="force-export-confirm" data-i18n="publish.exportAnyway">
+                Do you want to export anyway?
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btn-force-export" data-i18n="publish.exportAnywayBtn">Export Anyway</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/publish.js') }}"></script>
+{% endblock %}

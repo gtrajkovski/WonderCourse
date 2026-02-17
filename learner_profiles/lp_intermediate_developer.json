@@ -1,0 +1,30 @@
+{
+  "id": "lp_intermediate_developer",
+  "name": "Intermediate Developer",
+  "description": "Software developer with 2-5 years experience looking to expand skills.",
+  "prior_knowledge": [
+    "Programming fundamentals",
+    "Version control"
+  ],
+  "prerequisites": [],
+  "technical_level": "intermediate",
+  "industry_background": null,
+  "language_proficiency": "native",
+  "preferred_language": "English",
+  "jargon_familiarity": [],
+  "learning_preference": "hands_on",
+  "attention_span_minutes": 20,
+  "prefers_examples": true,
+  "prefers_analogies": true,
+  "learning_context": "upskilling",
+  "available_hours_per_week": 5,
+  "has_time_constraints": false,
+  "completion_deadline": null,
+  "accessibility_needs": [],
+  "color_blind_friendly": false,
+  "large_text_needed": false,
+  "learning_goals": [],
+  "certification_goal": false,
+  "created_at": "2026-02-16T21:06:32.606945",
+  "updated_at": "2026-02-16T21:06:32.606947"
+}

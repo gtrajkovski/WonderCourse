@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Course Builder Studio{% endblock %}</title>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/collaboration.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/help.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/loading.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components/language-selector.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/accessibility.css') }}">
+
+    <!-- Intro.js for Onboarding -->
+    <link rel="stylesheet" href="https://unpkg.com/intro.js@7.2.0/minified/introjs.min.css">
+
+    <!-- Theme initialization (load early to prevent flash) -->
+    <script src="{{ url_for('static', filename='js/utils/theme.js') }}"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}has-sidebar{% endblock %}">
+    {% block body_layout %}
+    <!-- Sidebar Navigation -->
+    {% include 'partials/sidebar.html' %}
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        {% include 'partials/header.html' %}
+
+        <!-- Main Content -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Collaboration Components (when course context exists) -->
+    {% if course_id %}
+    {% include 'partials/collab-modal.html' %}
+    {% include 'partials/activity-feed.html' %}
+    {% endif %}
+
+    <!-- Help Panel (always available) -->
+    {% include 'partials/help-panel.html' %}
+    {% endblock %}
+
+    <!-- Intro.js for Onboarding -->
+    <script src="https://unpkg.com/intro.js@7.2.0/minified/intro.min.js"></script>
+
+    <!-- Utility Scripts -->
+    <script src="{{ url_for('static', filename='js/utils/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/storage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/toast.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/error-recovery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/skeleton.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/collaboration.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/language-selector.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/onboarding.js') }}"></script>
+
+    {% if course_id %}
+    <script>
+      // Initialize collaboration controller for this course
+      document.addEventListener('DOMContentLoaded', function() {
+        window.collab = new CollaborationController('{{ course_id }}');
+      });
+    </script>
+    {% endif %}
+
+    <script>
+      // Help menu dropdown
+      document.addEventListener('DOMContentLoaded', function() {
+        const helpMenuBtn = document.getElementById('help-menu-btn');
+        const helpDropdown = document.getElementById('help-dropdown');
+
+        if (helpMenuBtn && helpDropdown) {
+          helpMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            helpDropdown.classList.toggle('open');
+          });
+
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!helpMenuBtn.contains(e.target) && !helpDropdown.contains(e.target)) {
+              helpDropdown.classList.remove('open');
+            }
+          });
+
+          // Close dropdown when clicking an item
+          helpDropdown.querySelectorAll('.help-dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+              helpDropdown.classList.remove('open');
+            });
+          });
+        }
+      });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

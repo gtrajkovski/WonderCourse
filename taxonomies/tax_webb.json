@@ -1,0 +1,130 @@
+{
+  "id": "tax_webb",
+  "name": "Webb's Depth of Knowledge",
+  "description": "Four-level framework measuring cognitive complexity required for tasks. Focuses on what students do, not content difficulty.",
+  "taxonomy_type": "linear",
+  "is_system_preset": true,
+  "levels": [
+    {
+      "id": "webb_recall",
+      "name": "Recall & Reproduction",
+      "value": "recall",
+      "description": "Recall facts, definitions, terms, or simple procedures",
+      "order": 1,
+      "example_verbs": [
+        "recall",
+        "recognize",
+        "identify",
+        "define",
+        "list",
+        "name",
+        "state",
+        "locate"
+      ],
+      "color": "#E57373"
+    },
+    {
+      "id": "webb_skills",
+      "name": "Skills & Concepts",
+      "value": "skills_concepts",
+      "description": "Apply skills and concepts, compare, classify, organize",
+      "order": 2,
+      "example_verbs": [
+        "summarize",
+        "interpret",
+        "classify",
+        "compare",
+        "organize",
+        "predict",
+        "estimate",
+        "infer"
+      ],
+      "color": "#FFB74D"
+    },
+    {
+      "id": "webb_strategic",
+      "name": "Strategic Thinking",
+      "value": "strategic",
+      "description": "Reasoning, planning, using evidence, complex and abstract thinking",
+      "order": 3,
+      "example_verbs": [
+        "analyze",
+        "investigate",
+        "formulate",
+        "construct",
+        "assess",
+        "revise",
+        "critique",
+        "hypothesize"
+      ],
+      "color": "#81C784"
+    },
+    {
+      "id": "webb_extended",
+      "name": "Extended Thinking",
+      "value": "extended",
+      "description": "Extended investigation, real-world application, novel solutions",
+      "order": 4,
+      "example_verbs": [
+        "design",
+        "create",
+        "synthesize",
+        "apply concepts in new contexts",
+        "connect ideas",
+        "critique",
+        "prove"
+      ],
+      "color": "#BA68C8"
+    }
+  ],
+  "activity_mappings": [
+    {
+      "activity_type": "graded_quiz",
+      "compatible_levels": [
+        "recall",
+        "skills_concepts"
+      ],
+      "primary_levels": [
+        "recall"
+      ]
+    },
+    {
+      "activity_type": "video_lecture",
+      "compatible_levels": [
+        "recall",
+        "skills_concepts"
+      ],
+      "primary_levels": [
+        "skills_concepts"
+      ]
+    },
+    {
+      "activity_type": "hands_on_lab",
+      "compatible_levels": [
+        "skills_concepts",
+        "strategic",
+        "extended"
+      ],
+      "primary_levels": [
+        "strategic"
+      ]
+    },
+    {
+      "activity_type": "project_milestone",
+      "compatible_levels": [
+        "strategic",
+        "extended"
+      ],
+      "primary_levels": [
+        "extended"
+      ]
+    }
+  ],
+  "require_progression": true,
+  "allow_regression_within": 1,
+  "minimum_unique_levels": 2,
+  "require_higher_order": true,
+  "higher_order_threshold": 3,
+  "created_at": "2026-02-16T21:41:31.195428",
+  "updated_at": "2026-02-16T21:41:31.195429"
+}

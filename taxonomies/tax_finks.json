@@ -1,0 +1,151 @@
+{
+  "id": "tax_finks",
+  "name": "Fink's Significant Learning",
+  "description": "Six non-hierarchical categories of learning. Unlike other taxonomies, these categories are interactive and can occur simultaneously.",
+  "taxonomy_type": "categorical",
+  "is_system_preset": true,
+  "levels": [
+    {
+      "id": "fink_foundational",
+      "name": "Foundational Knowledge",
+      "value": "foundational",
+      "description": "Understanding and remembering information and ideas",
+      "order": 1,
+      "example_verbs": [
+        "understand",
+        "remember",
+        "identify",
+        "describe",
+        "explain"
+      ],
+      "color": "#E57373"
+    },
+    {
+      "id": "fink_application",
+      "name": "Application",
+      "value": "application",
+      "description": "Skills, critical/creative/practical thinking, managing projects",
+      "order": 2,
+      "example_verbs": [
+        "apply",
+        "use",
+        "perform",
+        "manage",
+        "create",
+        "think critically"
+      ],
+      "color": "#FFB74D"
+    },
+    {
+      "id": "fink_integration",
+      "name": "Integration",
+      "value": "integration",
+      "description": "Connecting ideas, people, and realms of life",
+      "order": 3,
+      "example_verbs": [
+        "connect",
+        "relate",
+        "integrate",
+        "compare",
+        "link",
+        "synthesize"
+      ],
+      "color": "#81C784"
+    },
+    {
+      "id": "fink_human_dimension",
+      "name": "Human Dimension",
+      "value": "human_dimension",
+      "description": "Learning about oneself and others",
+      "order": 4,
+      "example_verbs": [
+        "discover about self",
+        "understand others",
+        "interact",
+        "collaborate",
+        "lead"
+      ],
+      "color": "#64B5F6"
+    },
+    {
+      "id": "fink_caring",
+      "name": "Caring",
+      "value": "caring",
+      "description": "Developing new feelings, interests, and values",
+      "order": 5,
+      "example_verbs": [
+        "value",
+        "commit",
+        "care about",
+        "develop interest in",
+        "become motivated"
+      ],
+      "color": "#F48FB1"
+    },
+    {
+      "id": "fink_learning_how",
+      "name": "Learning How to Learn",
+      "value": "learning_how",
+      "description": "Becoming a better student and self-directed learner",
+      "order": 6,
+      "example_verbs": [
+        "learn",
+        "inquire",
+        "self-direct",
+        "reflect on learning",
+        "identify resources"
+      ],
+      "color": "#BA68C8"
+    }
+  ],
+  "activity_mappings": [
+    {
+      "activity_type": "video_lecture",
+      "compatible_levels": [
+        "foundational",
+        "application",
+        "integration",
+        "human_dimension",
+        "caring",
+        "learning_how"
+      ],
+      "primary_levels": [
+        "foundational",
+        "application"
+      ]
+    },
+    {
+      "activity_type": "discussion_prompt",
+      "compatible_levels": [
+        "integration",
+        "human_dimension",
+        "caring"
+      ],
+      "primary_levels": [
+        "human_dimension",
+        "integration"
+      ]
+    },
+    {
+      "activity_type": "project_milestone",
+      "compatible_levels": [
+        "application",
+        "integration",
+        "human_dimension",
+        "caring",
+        "learning_how"
+      ],
+      "primary_levels": [
+        "application",
+        "integration"
+      ]
+    }
+  ],
+  "require_progression": false,
+  "allow_regression_within": 0,
+  "minimum_unique_levels": 2,
+  "require_higher_order": false,
+  "higher_order_threshold": 0,
+  "created_at": "2026-02-16T21:41:31.195456",
+  "updated_at": "2026-02-16T21:41:31.195457"
+}

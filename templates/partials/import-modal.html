@@ -1,0 +1,44 @@
+<!-- Import Modal for in-page quick imports -->
+<div class="modal" id="import-modal" style="display: none;">
+    <div class="modal-overlay" data-modal-close></div>
+    <div class="modal-content import-modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="quickImport.title">Quick Import</h2>
+            <button type="button" class="modal-close" data-modal-close>&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Compact import interface -->
+            <div class="import-modal-tabs">
+                <button class="import-modal-tab active" data-tab="paste" data-i18n="quickImport.paste">Paste</button>
+                <button class="import-modal-tab" data-tab="upload" data-i18n="quickImport.upload">Upload</button>
+            </div>
+
+            <!-- Paste Section -->
+            <div class="import-modal-section active" data-section="paste">
+                <textarea
+                    id="modal-paste-input"
+                    data-i18n-placeholder="quickImport.pastePlaceholder"
+                    placeholder="Paste content here..."
+                    rows="8"
+                    class="modal-textarea"
+                ></textarea>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="import-modal-section" data-section="upload">
+                <div class="modal-dropzone" id="modal-dropzone">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 17v-6m0 0l-3 3m3-3l3 3"/>
+                    </svg>
+                    <p data-i18n="quickImport.dropOrClick">Drop file here or click to select</p>
+                    <input type="file" id="modal-file-input" hidden>
+                </div>
+                <div id="modal-file-info" class="modal-file-info"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" id="modal-import-btn" data-i18n="quickImport.import">Import</button>
+        </div>
+    </div>
+</div>

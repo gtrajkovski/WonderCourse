@@ -1,0 +1,234 @@
+/**
+ * Loading States - Skeleton screens and loading animations
+ */
+
+/* Base skeleton item */
+.skeleton-item {
+  height: 40px;
+  margin: 8px 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+/* Skeleton loading animation */
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Skeleton variants */
+.skeleton-text {
+  height: 16px;
+  margin: 4px 0;
+  border-radius: 2px;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 60%;
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0;
+}
+
+.skeleton-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.skeleton-card .skeleton-title {
+  margin-bottom: 8px;
+}
+
+.skeleton-card .skeleton-text {
+  margin-bottom: 4px;
+}
+
+.skeleton-card .skeleton-text:last-child {
+  width: 70%;
+}
+
+.skeleton-tree-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+.skeleton-tree-item .skeleton-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 12px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-tree-item .skeleton-text {
+  flex: 1;
+  margin: 0;
+}
+
+/* Container states */
+[data-loading="true"] .skeleton-item,
+[data-loading="true"] .skeleton-text,
+[data-loading="true"] .skeleton-title,
+[data-loading="true"] .skeleton-avatar,
+[data-loading="true"] .skeleton-card,
+[data-loading="true"] .skeleton-tree-item {
+  display: block;
+}
+
+[data-loading="true"] .real-content {
+  display: none;
+}
+
+[data-loading="false"] .skeleton-item,
+[data-loading="false"] .skeleton-text,
+[data-loading="false"] .skeleton-title,
+[data-loading="false"] .skeleton-avatar,
+[data-loading="false"] .skeleton-card,
+[data-loading="false"] .skeleton-tree-item {
+  display: none;
+}
+
+[data-loading="false"] .real-content {
+  display: block;
+}
+
+/* Skeleton grid layout for cards */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+/* Loading message */
+.loading-message {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+[data-loading="false"] .loading-message {
+  display: none;
+}
+
+/* Elapsed time indicator */
+.elapsed-time {
+  display: inline-block;
+  margin-left: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+/* Error dialogs */
+.error-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.error-dialog {
+  background: #2a2a3e;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.error-dialog h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #fff;
+  font-size: 20px;
+}
+
+.error-dialog p {
+  margin: 8px 0;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.error-dialog-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: flex-end;
+}
+
+.error-dialog-actions .btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.error-dialog-actions .btn-primary {
+  background: #6366f1;
+  color: #fff;
+}
+
+.error-dialog-actions .btn-primary:hover {
+  background: #4f46e5;
+}
+
+.error-dialog-actions .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.error-dialog-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Field errors */
+.field-error {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.field-error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}

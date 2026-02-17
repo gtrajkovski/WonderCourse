@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Studio - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/studio.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/ai-toolbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/video-studio.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="studio" data-course-id="{{ course.id }}">
+    <!-- Left Panel - Activity List -->
+    <div class="activity-panel">
+        <div class="panel-header">
+            <h2 data-i18n="studio.activities">Activities</h2>
+        </div>
+        <div class="activity-list" id="activity-list" data-loading="false">
+            <!-- Skeleton for initial load -->
+            {% from 'partials/skeleton.html' import skeleton_activity_list %}
+            {{ skeleton_activity_list() }}
+
+            <!-- Real content -->
+            <div class="real-content">
+                {% for module in course.modules %}
+                <div class="activity-group">
+                    <div class="activity-group-header">
+                        <span class="group-icon">📁</span>
+                        <span class="group-title">{{ module.title }}</span>
+                    </div>
+                    {% for lesson in module.lessons %}
+                    <div class="activity-lesson">
+                        <span class="lesson-label">{{ lesson.title }}</span>
+                        {% for activity in lesson.activities %}
+                        <div class="activity-item {% if selected_activity_id == activity.id %}selected{% endif %}"
+                             data-activity-id="{{ activity.id }}"
+                             data-content-type="{{ activity.content_type.value }}"
+                             data-build-state="{{ activity.build_state.value }}">
+                            <span class="activity-icon">{{ '🎥' if activity.content_type.value == 'video' else '📄' if activity.content_type.value == 'reading' else '❓' if activity.content_type.value == 'quiz' else '🔬' if activity.content_type.value == 'lab' else '💬' if activity.content_type.value == 'discussion' else '✍️' if activity.content_type.value == 'hol' else '👤' if activity.content_type.value == 'coach' else '📝' if activity.content_type.value == 'assignment' else '🎯' if activity.content_type.value == 'project' else '📄' }}</span>
+                            <span class="activity-title">{{ activity.title }}</span>
+                            <span class="activity-state state-{{ activity.build_state.value }}">{{ activity.build_state.value|replace('_', ' ')|title }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                {% if not course.modules %}
+                <div class="empty-activities">
+                    <p data-i18n="studio.noActivities">No activities yet.</p>
+                    <p class="text-muted" data-i18n="studio.addInBuilder">Add activities in the Builder page first.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Center Panel - Preview -->
+    <div class="preview-pane" id="preview-pane">
+        <div class="preview-header" id="preview-header">
+            <h3 class="preview-title" id="preview-title" data-i18n="studio.selectActivity">Select an Activity</h3>
+            <div class="preview-mode-toggle" id="preview-mode-toggle" style="display: none;">
+                <button class="toggle-btn active" id="btn-author-view" data-i18n-title="studio.authorViewHint" title="Author view with notes and controls">
+                    <span data-i18n="studio.author">Author</span>
+                </button>
+                <button class="toggle-btn" id="btn-learner-preview" data-i18n-title="studio.learnerPreviewHint" title="Preview as learner sees it">
+                    <span data-i18n="studio.learner">Learner</span>
+                </button>
+            </div>
+            <div class="viewport-selector" id="viewport-selector" style="display: none;">
+                <button class="viewport-btn active" data-viewport="desktop" data-i18n-title="studio.desktopHint" data-i18n="studio.desktop" title="Desktop view">Desktop</button>
+                <button class="viewport-btn" data-viewport="tablet" data-i18n-title="studio.tabletHint" data-i18n="studio.tablet" title="Tablet view">Tablet</button>
+                <button class="viewport-btn" data-viewport="mobile" data-i18n-title="studio.mobileHint" data-i18n="studio.mobile" title="Mobile view">Mobile</button>
+            </div>
+            <span class="preview-badge" id="preview-badge" style="display: none;"></span>
+        </div>
+        <div class="preview-body" id="preview-body" data-loading="false">
+            <!-- Skeleton for content loading -->
+            {% from 'partials/skeleton.html' import skeleton_content %}
+            {{ skeleton_content() }}
+
+            <!-- Real content sections -->
+            <div class="real-content">
+                <div class="preview-empty" id="preview-empty">
+                    <div class="empty-icon">📄</div>
+                    <p data-i18n="studio.selectToViewGenerate">Select an activity from the list to view or generate content.</p>
+                </div>
+                <div class="preview-content" id="preview-content" style="display: none;">
+                    <!-- Content will be rendered here -->
+                </div>
+            </div>
+            <div class="preview-streaming" id="preview-streaming" style="display: none;">
+                <div class="streaming-indicator">
+                    <span class="streaming-dot"></span>
+                    <span class="streaming-text" data-i18n="studio.generatingContent">Generating content...</span>
+                </div>
+                <div class="streaming-output" id="streaming-output"></div>
+            </div>
+        </div>
+        <div class="preview-footer" id="preview-footer" style="display: none;">
+            <div class="preview-meta">
+                <span class="meta-item"><strong data-i18n="studio.words">Words:</strong> <span id="meta-word-count">0</span></span>
+                <span class="meta-item"><strong data-i18n="studio.durationLabel">Duration:</strong> <span id="meta-duration">0 min</span></span>
+                <span class="meta-item" id="meta-wpm-item" style="display: none;"><strong data-i18n="studio.atRate">@ </strong><span id="meta-wpm">120</span> <span data-i18n="studio.wpmLabel">WPM</span></span>
+                <span class="meta-item"><strong data-i18n="studio.bloomsLabel">Bloom's:</strong> <span id="meta-bloom">-</span></span>
+                <span class="meta-item" id="meta-humanization-item" style="display: none;"><strong data-i18n="studio.quality">Quality:</strong> <span id="meta-humanization-score">--</span></span>
+            </div>
+        </div>
+
+        <!-- Developer Notes Panel -->
+        <div class="notes-panel" id="notes-panel" style="display: none;">
+            <div class="notes-header">
+                <h4 data-i18n="studio.developerNotes">Developer Notes</h4>
+                <button class="btn btn-small btn-secondary" id="btn-add-note" data-i18n-title="studio.addNoteHint" data-i18n="studio.addNote" title="Add a new note">+ Add Note</button>
+            </div>
+            <div class="notes-list" id="notes-list">
+                <div class="notes-empty" id="notes-empty">
+                    <p class="text-muted" data-i18n="studio.noNotesYet">No notes yet. Add notes to track TODOs or reminders.</p>
+                </div>
+                <!-- Notes will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel - Controls -->
+    <div class="controls-panel" id="controls-panel">
+        <div class="panel-header">
+            <h3 data-i18n="studio.controls">Controls</h3>
+        </div>
+        <div class="controls-content">
+            <!-- Generate Section -->
+            <div class="control-section" id="section-generate">
+                <h4><span data-i18n="studio.generateContentTitle">Generate Content</span>
+                    <button class="help-btn" data-help="content-generation" data-i18n-title="studio.learnContentGen" title="Learn about AI content generation">?</button>
+                </h4>
+                <button class="btn btn-primary btn-large btn-block" id="btn-generate" disabled data-i18n-title="studio.generateHint" data-i18n="studio.generate" title="Generate new content with AI">
+                    Generate
+                </button>
+                <p class="control-hint" data-i18n="studio.generateHintText">Generate AI content for the selected activity.</p>
+
+                <!-- Progress Indicator -->
+                <div id="generation-progress" class="generation-progress" style="display: none;">
+                    <div class="progress-stage">
+                        <span class="stage-icon">⏳</span>
+                        <span class="stage-text" id="stage-text" data-i18n="studio.analyzingContext">Analyzing context...</span>
+                    </div>
+                    <div class="elapsed-time">
+                        <span data-i18n="studio.elapsed">Elapsed:</span> <span id="elapsed-seconds">0</span>s
+                    </div>
+                    <button id="cancel-generation" class="btn btn-secondary btn-small" data-i18n-title="studio.cancelHint" data-i18n="common.cancel" title="Cancel generation">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Edit Section -->
+            <div class="control-section" id="section-edit" style="display: none;">
+                <h4 data-i18n="studio.editContentTitle">Edit Content</h4>
+                <button class="btn btn-secondary btn-block" id="btn-edit-mode" data-i18n="studio.editMode">
+                    Edit Mode
+                </button>
+                <button class="btn btn-secondary btn-block" id="btn-full-editor" style="margin-top: 8px;" data-i18n="studio.fullEditor">
+                    Full Editor
+                </button>
+                <button class="btn btn-secondary btn-block" id="btn-video-studio" style="margin-top: 8px; display: none;" data-i18n="studio.videoStudio">
+                    Video Studio
+                </button>
+            </div>
+
+            <!-- Humanization Section -->
+            <div class="control-section" id="section-humanize" style="display: none;">
+                <h4><span data-i18n="studio.textQuality">Text Quality</span>
+                    <button class="help-btn" data-help="humanization" data-i18n-title="studio.learnHumanization" title="Learn about text humanization">?</button>
+                </h4>
+                <div class="humanization-score-container">
+                    <div class="score-ring" id="humanization-ring">
+                        <svg viewBox="0 0 36 36" class="score-ring-svg">
+                            <path class="score-ring-bg"
+                                d="M18 2.0845
+                                   a 15.9155 15.9155 0 0 1 0 31.831
+                                   a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="score-ring-progress" id="score-ring-progress"
+                                stroke-dasharray="0, 100"
+                                d="M18 2.0845
+                                   a 15.9155 15.9155 0 0 1 0 31.831
+                                   a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <span class="score-value" id="humanization-score">--</span>
+                    </div>
+                    <div class="score-label" data-i18n="studio.humanizationScore">Humanization Score</div>
+                </div>
+                <div class="humanization-buttons">
+                    <button class="btn btn-secondary btn-block" id="btn-humanize" data-i18n-title="studio.humanizeHint" data-i18n="studio.humanizeText" title="Improve text to sound more natural">
+                        Humanize Text
+                    </button>
+                    <button class="btn btn-link btn-block" id="btn-view-patterns" style="margin-top: 4px;" data-i18n="studio.viewPatterns">
+                        View Patterns
+                    </button>
+                </div>
+            </div>
+
+            <!-- Regenerate Section -->
+            <div class="control-section" id="section-regenerate" style="display: none;">
+                <h4 data-i18n="studio.regenerateWithFeedback">Regenerate with Feedback</h4>
+                <textarea class="form-textarea" id="regenerate-feedback" rows="3"
+                          data-i18n-placeholder="studio.regeneratePlaceholder" placeholder="Describe what changes you'd like..."></textarea>
+
+                <!-- Length Controls - Non-Video -->
+                <div class="length-controls" id="length-controls-text" style="display: none;">
+                    <label data-i18n="studio.targetWordCount">Target Word Count</label>
+                    <input type="number" id="target-word-count" class="form-input"
+                           min="100" max="5000" step="50" data-i18n-placeholder="studio.wordCountPlaceholder" placeholder="e.g., 500">
+                    <span class="length-hint" data-i18n="studio.leaveBlankDefault">Leave blank to keep similar length</span>
+                </div>
+
+                <!-- Length Controls - Video -->
+                <div class="length-controls" id="length-controls-video" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="studio.targetDuration">Target Duration (min)</label>
+                            <input type="number" id="target-duration" class="form-input"
+                                   min="1" max="30" step="0.5" data-i18n-placeholder="studio.durationPlaceholder" placeholder="e.g., 5">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="studio.speakingRate">Speaking Rate (WPM)</label>
+                            <input type="number" id="speaking-wpm" class="form-input"
+                                   min="80" max="180" value="120" step="10">
+                        </div>
+                    </div>
+                    <div class="calculated-words">
+                        ≈ <span id="calc-word-count">0</span> <span data-i18n="studio.wordsLabel">words</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary btn-block" id="btn-regenerate" style="margin-top: 8px;" data-i18n-title="studio.regenerateHint" data-i18n="studio.regenerate" title="Regenerate with different parameters">
+                    Regenerate
+                </button>
+            </div>
+
+            <!-- State Transitions -->
+            <div class="control-section" id="section-state" style="display: none;">
+                <h4 data-i18n="studio.workflow">Workflow</h4>
+                <div class="state-buttons">
+                    <button class="btn btn-secondary btn-block" id="btn-mark-reviewed" data-i18n="studio.markReviewed">Mark Reviewed</button>
+                    <button class="btn btn-success btn-block" id="btn-approve" style="margin-top: 8px;" data-i18n="studio.approve">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Full Editor Modal -->
+<div id="editor-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 data-i18n="studio.editContentTitle">Edit Content</h2>
+        </div>
+        <div class="modal-body">
+            <textarea id="editor-content" class="form-textarea editor-textarea" rows="20"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" id="btn-save-editor" data-i18n="studio.saveChanges">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Toolbar -->
+{% include 'partials/ai-toolbar.html' %}
+
+<!-- Video Studio -->
+{% include 'partials/video-studio.html' %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/video-studio.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/studio.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/ai-toolbar.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseId = '{{ course.id }}';
+        const selectedActivityId = '{{ selected_activity_id or '' }}';
+        window.studioController = new StudioController(courseId, selectedActivityId);
+        window.studioController.init();
+
+        // Initialize AI Toolbar
+        // Will be attached to content area when activity is selected
+        window.aiToolbar = null;
+    });
+</script>
+{% endblock %}

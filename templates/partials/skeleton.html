@@ -1,0 +1,83 @@
+{# Skeleton screen components for loading states #}
+
+{# Course card skeleton #}
+{% macro skeleton_card() %}
+<div class="skeleton-card">
+  <div class="skeleton-title"></div>
+  <div class="skeleton-text"></div>
+  <div class="skeleton-text"></div>
+  <div class="skeleton-text"></div>
+</div>
+{% endmacro %}
+
+{# List of skeleton items #}
+{% macro skeleton_list(count=5) %}
+{% for i in range(count) %}
+<div class="skeleton-item"></div>
+{% endfor %}
+{% endmacro %}
+
+{# Tree structure skeleton #}
+{% macro skeleton_tree() %}
+<div class="skeleton-tree-container">
+  <div class="skeleton-tree-item">
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-text"></div>
+  </div>
+  <div class="skeleton-tree-item" style="padding-left: 32px;">
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-text"></div>
+  </div>
+  <div class="skeleton-tree-item" style="padding-left: 32px;">
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-text"></div>
+  </div>
+  <div class="skeleton-tree-item">
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-text"></div>
+  </div>
+  <div class="skeleton-tree-item" style="padding-left: 32px;">
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-text"></div>
+  </div>
+</div>
+{% endmacro %}
+
+{# Content preview skeleton #}
+{% macro skeleton_content() %}
+<div class="skeleton-content">
+  <div class="skeleton-title"></div>
+  <div style="margin: 20px 0;">
+    <div class="skeleton-text"></div>
+    <div class="skeleton-text"></div>
+    <div class="skeleton-text"></div>
+    <div class="skeleton-text" style="width: 80%;"></div>
+  </div>
+  <div style="margin: 20px 0;">
+    <div class="skeleton-text"></div>
+    <div class="skeleton-text"></div>
+    <div class="skeleton-text" style="width: 90%;"></div>
+  </div>
+</div>
+{% endmacro %}
+
+{# Course cards grid skeleton #}
+{% macro skeleton_cards_grid(count=6) %}
+<div class="skeleton-grid">
+  {% for i in range(count) %}
+  {{ skeleton_card() }}
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{# Activity list skeleton #}
+{% macro skeleton_activity_list() %}
+<div class="skeleton-activity-list">
+  {% for i in range(8) %}
+  <div class="skeleton-tree-item">
+    <div class="skeleton-icon"></div>
+    <div class="skeleton-text"></div>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

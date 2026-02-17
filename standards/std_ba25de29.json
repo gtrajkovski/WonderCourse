@@ -1,0 +1,249 @@
+{
+  "id": "std_ba25de29",
+  "name": "Test Profile",
+  "description": "",
+  "is_system_preset": false,
+  "video_max_duration_min": 10,
+  "video_ideal_min_duration": 3,
+  "video_ideal_max_duration": 7,
+  "video_structure": [
+    "Hook",
+    "Objective",
+    "Content",
+    "IVQ",
+    "Summary",
+    "CTA"
+  ],
+  "video_structure_required": true,
+  "video_wpm": 150,
+  "video_cta_max_words": 35,
+  "video_cta_forbid_activity_previews": true,
+  "video_cta_forbidden_phrases": [
+    "next you'll",
+    "upcoming",
+    "in the next",
+    "following activity",
+    "coach dialogue",
+    "graded assessment",
+    "final quiz",
+    "next video",
+    "next lesson",
+    "next module",
+    "practice quiz",
+    "hands-on lab"
+  ],
+  "video_section_timing_enabled": true,
+  "video_section_word_counts": {
+    "hook": {
+      "min": 75,
+      "max": 150
+    },
+    "objective": {
+      "min": 75,
+      "max": 112
+    },
+    "content": {
+      "min": 450,
+      "max": 900
+    },
+    "ivq": {
+      "min": 75,
+      "max": 150
+    },
+    "summary": {
+      "min": 75,
+      "max": 112
+    },
+    "cta": {
+      "min": 37,
+      "max": 75
+    }
+  },
+  "video_visual_cue_enabled": true,
+  "video_visual_cue_interval_seconds": 75,
+  "video_visual_cue_pattern": "\\[(?:Talking head|B-roll|Screen recording|Animation|Graphic):[^\\]]+\\]",
+  "reading_max_words": 1200,
+  "reading_min_references": 3,
+  "reading_max_references": 4,
+  "reading_reference_format": "apa7",
+  "reading_require_free_links": true,
+  "reading_max_optional": 4,
+  "reading_require_attribution": true,
+  "reading_attribution_template": "{author} ({year}). Author's original work based on professional experience, developed with the assistance of AI tools (Claude AI).",
+  "reading_paywall_domains": [
+    "jstor.org",
+    "sciencedirect.com",
+    "springer.com",
+    "springerlink.com",
+    "wiley.com",
+    "onlinelibrary.wiley.com",
+    "tandfonline.com",
+    "nature.com",
+    "ieee.org",
+    "ieeexplore.ieee.org",
+    "acm.org",
+    "dl.acm.org",
+    "elsevier.com",
+    "sagepub.com",
+    "oxfordjournals.org",
+    "cambridge.org",
+    "emerald.com",
+    "taylorfrancis.com"
+  ],
+  "hol_rubric_criteria_count": 3,
+  "hol_rubric_total_points": 15,
+  "hol_rubric_levels": [
+    {
+      "name": "Advanced",
+      "points": 5
+    },
+    {
+      "name": "Intermediate",
+      "points": 4
+    },
+    {
+      "name": "Beginner",
+      "points": 2
+    }
+  ],
+  "hol_submission_format": ".txt",
+  "hol_max_word_count": 150,
+  "quiz_options_per_question": 4,
+  "quiz_require_per_option_feedback": true,
+  "quiz_require_balanced_distribution": true,
+  "quiz_min_distribution_percent": 15,
+  "quiz_max_distribution_skew_percent": 35,
+  "quiz_allow_multiple_correct": true,
+  "quiz_allow_scenario_based": true,
+  "quiz_time_per_question_min": 1.5,
+  "practice_quiz_require_hints": true,
+  "practice_quiz_require_explanations": true,
+  "coach_evaluation_levels": [
+    "Advanced",
+    "Intermediate",
+    "Beginner"
+  ],
+  "coach_require_example_responses": true,
+  "coach_require_scenario": true,
+  "lab_min_exercises": 3,
+  "lab_max_exercises": 8,
+  "lab_require_setup_steps": true,
+  "discussion_min_facilitation_questions": 3,
+  "discussion_max_facilitation_questions": 5,
+  "discussion_require_engagement_hooks": true,
+  "assignment_min_deliverables": 1,
+  "assignment_max_deliverables": 5,
+  "assignment_min_grading_criteria": 3,
+  "assignment_max_grading_criteria": 6,
+  "project_milestone_types": [
+    "A1",
+    "A2",
+    "A3"
+  ],
+  "project_min_deliverables": 2,
+  "project_max_deliverables": 5,
+  "rubric_min_criteria": 3,
+  "rubric_max_criteria": 6,
+  "rubric_levels": [
+    "Below Expectations",
+    "Meets Expectations",
+    "Exceeds Expectations"
+  ],
+  "course_flow_model": "WWHAA",
+  "course_min_modules": 2,
+  "course_max_modules": 3,
+  "course_min_duration_min": 30,
+  "course_max_duration_min": 180,
+  "course_min_learning_objectives": 1,
+  "course_max_learning_objectives": 3,
+  "course_min_items": 12,
+  "course_max_items": 18,
+  "forbid_sequential_references": true,
+  "content_distribution_enabled": true,
+  "content_distribution_targets": {
+    "video": {
+      "target": 30,
+      "tolerance": 10
+    },
+    "reading": {
+      "target": 20,
+      "tolerance": 10
+    },
+    "hol": {
+      "target": 30,
+      "tolerance": 10
+    },
+    "assessment": {
+      "target": 20,
+      "tolerance": 10
+    }
+  },
+  "wwhaa_sequence_enabled": true,
+  "wwhaa_phase_config": {
+    "why": {
+      "order": 1,
+      "content_types": [
+        "coach",
+        "video"
+      ],
+      "min_duration": 5,
+      "max_duration": 15
+    },
+    "what": {
+      "order": 2,
+      "content_types": [
+        "video",
+        "reading"
+      ],
+      "min_duration": 10,
+      "max_duration": 20
+    },
+    "how": {
+      "order": 3,
+      "content_types": [
+        "screencast",
+        "video"
+      ],
+      "min_duration": 15,
+      "max_duration": 20
+    },
+    "apply": {
+      "order": 4,
+      "content_types": [
+        "hol",
+        "lab",
+        "quiz"
+      ],
+      "min_duration": 20,
+      "max_duration": 30
+    },
+    "assess": {
+      "order": 5,
+      "content_types": [
+        "quiz",
+        "assignment"
+      ],
+      "min_duration": 10,
+      "max_duration": 20
+    }
+  },
+  "tone_description": "Conversational but professional. Like a knowledgeable colleague, not a textbook.",
+  "tone_allow_first_person": true,
+  "tone_require_active_voice": true,
+  "tone_require_concrete_examples": true,
+  "tone_custom_guidelines": "",
+  "author_attribution": "",
+  "require_attribution": true,
+  "accessibility_standard": "WCAG_2.2_AA",
+  "require_alt_text": true,
+  "require_captions": true,
+  "enable_auto_humanize": true,
+  "humanize_em_dashes": true,
+  "humanize_formal_vocabulary": true,
+  "humanize_adjective_lists": true,
+  "humanize_ai_transitions": true,
+  "humanize_filler_phrases": true,
+  "humanization_score_threshold": 70,
+  "created_at": "2026-02-16T22:20:51.914770",
+  "updated_at": "2026-02-16T22:20:51.914785"
+}

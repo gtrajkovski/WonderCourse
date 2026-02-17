@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Planner - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/planner.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="planner" data-course-id="{{ course.id }}">
+    <div class="planner-header">
+        <h2 data-i18n="planner.title">Course Planner</h2>
+        <p class="planner-subtitle" data-i18n="planner.subtitle">Define your course content and structure</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="planner-tabs">
+        <button class="tab-btn active" data-tab="setup" data-i18n="planner.courseSetup">Course Setup</button>
+        <button class="tab-btn" data-tab="outcomes" data-i18n="planner.learningOutcomes">Learning Outcomes</button>
+        <button class="tab-btn" data-tab="blueprint" data-i18n="planner.blueprintGeneration">Blueprint Generation</button>
+    </div>
+
+    <!-- Section 1: Course Setup -->
+    <section id="tab-setup" class="planner-section active">
+        <div class="section-card">
+            <div class="section-header">
+                <h3 data-i18n="planner.courseSetup">Course Setup</h3>
+                <span class="save-indicator" id="save-indicator"></span>
+            </div>
+            <form id="metadata-form" class="metadata-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="course-title" class="form-label required" data-i18n="planner.courseTitle">Course Title</label>
+                        <input type="text" id="course-title" name="title" class="form-input"
+                               value="{{ course.title }}" required data-i18n-placeholder="planner.enterCourseTitle" placeholder="Enter course title">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="course-description" class="form-label" data-i18n="planner.description">Description</label>
+                    <textarea id="course-description" name="description" class="form-textarea" rows="4"
+                              data-i18n-placeholder="planner.descriptionPlaceholder" placeholder="Describe what learners will achieve in this course">{{ course.description }}</textarea>
+                    <span class="form-hint" data-i18n="planner.descriptionHint">A clear description helps generate better blueprints</span>
+                </div>
+
+                <div class="form-row form-row-3">
+                    <div class="form-group">
+                        <label for="audience-level" class="form-label" data-i18n="planner.targetAudience">Target Audience</label>
+                        <select id="audience-level" name="audience_level" class="form-select">
+                            <option value="beginner" {% if course.audience_level == 'beginner' %}selected{% endif %} data-i18n="planner.beginner">Beginner</option>
+                            <option value="intermediate" {% if course.audience_level == 'intermediate' %}selected{% endif %} data-i18n="planner.intermediate">Intermediate</option>
+                            <option value="advanced" {% if course.audience_level == 'advanced' %}selected{% endif %} data-i18n="planner.advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="target-duration" class="form-label" data-i18n="planner.targetDuration">Target Duration (minutes)</label>
+                        <input type="number" id="target-duration" name="target_duration_minutes"
+                               class="form-input" value="{{ course.target_duration_minutes }}"
+                               min="15" max="600" step="15">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modality" class="form-label" data-i18n="planner.modality">Modality</label>
+                        <select id="modality" name="modality" class="form-select">
+                            <option value="self-paced" {% if course.modality == 'self-paced' %}selected{% endif %} data-i18n="planner.selfPaced">Self-Paced</option>
+                            <option value="instructor-led" {% if course.modality == 'instructor-led' %}selected{% endif %} data-i18n="planner.instructorLed">Instructor-Led</option>
+                            <option value="blended" {% if course.modality == 'blended' %}selected{% endif %} data-i18n="planner.blended">Blended</option>
+                            <option value="online" {% if course.modality == 'online' %}selected{% endif %} data-i18n="planner.online">Online</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label for="course-language" class="form-label" data-i18n="planner.courseLanguage">Course Language</label>
+                        <select id="course-language" name="language" class="form-select">
+                            <option value="English" {% if course.language == 'English' or not course.language %}selected{% endif %}>English</option>
+                            <option value="Spanish" {% if course.language == 'Spanish' %}selected{% endif %}>Español</option>
+                            <option value="French" {% if course.language == 'French' %}selected{% endif %}>Français</option>
+                            <option value="German" {% if course.language == 'German' %}selected{% endif %}>Deutsch</option>
+                            <option value="Portuguese" {% if course.language == 'Portuguese' %}selected{% endif %}>Português</option>
+                            <option value="Chinese" {% if course.language == 'Chinese' %}selected{% endif %}>中文</option>
+                            <option value="Japanese" {% if course.language == 'Japanese' %}selected{% endif %}>日本語</option>
+                            <option value="Korean" {% if course.language == 'Korean' %}selected{% endif %}>한국어</option>
+                            <option value="Macedonian" {% if course.language == 'Macedonian' %}selected{% endif %}>Македонски</option>
+                            <option value="Arabic" {% if course.language == 'Arabic' %}selected{% endif %}>العربية</option>
+                            <option value="Hindi" {% if course.language == 'Hindi' %}selected{% endif %}>हिन्दी</option>
+                        </select>
+                        <span class="form-hint" data-i18n="planner.languageHint">Generated content will be in this language</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="standards-profile" class="form-label" data-i18n="planner.contentStandards">Content Standards</label>
+                        <select id="standards-profile" name="standards_profile_id" class="form-select"
+                                data-current="{{ course.standards_profile_id or 'std_coursera' }}">
+                            <!-- Options loaded dynamically -->
+                        </select>
+                        <span class="form-hint" data-i18n="planner.standardsHint">Standards that govern generated content format</span>
+                    </div>
+                </div>
+
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="planner.textHumanization">Text Humanization</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="auto-humanize" name="enable_auto_humanize"
+                                       {% if standards_profile and standards_profile.enable_auto_humanize %}checked{% endif %}>
+                                <span data-i18n="planner.autoHumanize">Auto-humanize generated content</span>
+                            </label>
+                        </div>
+                        <span class="form-hint" data-i18n="planner.humanizeHint">Automatically improve AI-generated text to sound more natural</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="humanization-threshold" class="form-label" data-i18n="planner.qualityThreshold">Quality Threshold</label>
+                        <input type="number" id="humanization-threshold" name="humanization_score_threshold"
+                               class="form-input" value="{{ standards_profile.humanization_score_threshold if standards_profile else 70 }}"
+                               min="0" max="100" step="5">
+                        <span class="form-hint" data-i18n="planner.thresholdHint">Minimum humanization score (0-100)</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prerequisites" class="form-label" data-i18n="planner.prerequisites">Prerequisites</label>
+                    <textarea id="prerequisites" name="prerequisites" class="form-textarea" rows="2"
+                              data-i18n-placeholder="planner.prerequisitesPlaceholder" placeholder="What should learners know before starting this course?">{{ course.prerequisites if course.prerequisites else '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="tools" class="form-label" data-i18n="planner.toolsTechnologies">Tools & Technologies</label>
+                    <input type="text" id="tools" name="tools" class="form-input"
+                           value="{{ course.tools|join(', ') if course.tools else '' }}"
+                           data-i18n-placeholder="planner.toolsPlaceholder" placeholder="e.g., Python, VS Code, Docker (comma-separated)">
+                    <span class="form-hint" data-i18n="planner.toolsHint">Enter tools separated by commas</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="btn-save-metadata" data-i18n="common.save">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Section 2: Learning Outcomes -->
+    <section id="tab-outcomes" class="planner-section">
+        <div class="section-card">
+            <div class="section-header">
+                <h3><span data-i18n="planner.learningOutcomes">Learning Outcomes</span>
+                    <button class="help-btn" data-help="learning-outcome" title="Learn about learning outcomes">?</button>
+                </h3>
+                <button class="btn btn-primary btn-small" id="btn-add-outcome" data-i18n="planner.addOutcome">+ Add Outcome</button>
+            </div>
+
+            <div id="outcomes-list" class="outcome-list">
+                {% if course.learning_outcomes %}
+                    {% for outcome in course.learning_outcomes %}
+                    <div class="outcome-item" data-outcome-id="{{ outcome.id }}">
+                        <div class="outcome-content">
+                            <span class="bloom-badge bloom-{{ outcome.bloom_level }}">{{ outcome.bloom_level|title }}</span>
+                            <p class="outcome-text">
+                                <strong>{{ outcome.audience }}</strong> will be able to
+                                <strong>{{ outcome.behavior }}</strong>
+                                {% if outcome.condition %} {{ outcome.condition }}{% endif %}
+                                {% if outcome.degree %} {{ outcome.degree }}{% endif %}.
+                            </p>
+                        </div>
+                        <div class="outcome-actions">
+                            <button class="btn btn-secondary btn-small btn-edit-outcome" data-outcome-id="{{ outcome.id }}" data-i18n-title="common.edit" title="Edit this outcome" data-i18n="common.edit">Edit</button>
+                            <button class="btn btn-danger btn-small btn-delete-outcome" data-outcome-id="{{ outcome.id }}" data-i18n-title="common.delete" title="Remove this outcome" data-i18n="common.delete">Delete</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-outcomes">
+                    <p data-i18n="planner.noOutcomes">No learning outcomes defined yet.</p>
+                    <p class="text-muted" data-i18n="planner.outcomesHelp">Learning outcomes help generate a more focused course structure.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Blueprint Generation -->
+    <section id="tab-blueprint" class="planner-section">
+        <div class="section-card">
+            <div class="section-header">
+                <h3><span data-i18n="planner.blueprintGeneration">Blueprint Generation</span>
+                    <button class="help-btn" data-help="blueprint-generation" title="Learn about blueprint generation">?</button>
+                </h3>
+            </div>
+
+            <div class="blueprint-intro">
+                <p data-i18n="planner.blueprintIntro">Generate an AI-powered course blueprint based on your description and learning outcomes.</p>
+                <p class="text-muted" data-i18n="planner.blueprintHint">The blueprint will suggest modules, lessons, and activities structured for optimal learning.</p>
+            </div>
+
+            <div class="blueprint-actions">
+                <button class="btn btn-primary btn-large" id="btn-generate-blueprint" data-i18n="planner.generateBlueprint" title="Generate AI course structure">Generate Blueprint</button>
+                <span class="action-divider" data-i18n="common.or">or</span>
+                <button class="btn btn-secondary" id="btn-paste-blueprint" data-i18n="planner.pasteUpload" title="Paste or upload existing blueprint JSON">Paste/Upload Blueprint</button>
+            </div>
+
+            <!-- Paste Blueprint Modal trigger content -->
+            <div id="paste-blueprint-section" class="paste-blueprint-section" style="display: none;">
+                <div class="form-group">
+                    <label for="blueprint-json" class="form-label" data-i18n="planner.blueprintJson">Blueprint JSON</label>
+                    <textarea id="blueprint-json" class="form-textarea" rows="10"
+                              data-i18n-placeholder="planner.pasteJsonPlaceholder" placeholder="Paste your blueprint JSON here..."></textarea>
+                    <span class="form-hint" data-i18n="planner.pasteJsonHint">Paste a previously generated or custom blueprint in JSON format</span>
+                </div>
+                <div class="paste-actions">
+                    <button class="btn btn-secondary" id="btn-cancel-paste" data-i18n="common.cancel">Cancel</button>
+                    <label class="btn btn-secondary">
+                        <span data-i18n="planner.uploadFile">Upload File</span>
+                        <input type="file" id="blueprint-file-input" accept=".json" style="display: none;">
+                    </label>
+                    <button class="btn btn-primary" id="btn-load-blueprint" data-i18n="planner.loadBlueprint">Load Blueprint</button>
+                </div>
+            </div>
+
+            <div id="blueprint-status" class="blueprint-status" style="display: none;">
+                <div class="status-spinner"></div>
+                <span class="status-text" data-i18n="planner.generating">Generating blueprint...</span>
+            </div>
+
+            <div id="blueprint-preview" class="blueprint-preview" style="display: none;">
+                <div class="preview-header">
+                    <h4 data-i18n="planner.generatedBlueprint">Generated Blueprint</h4>
+                    <div class="preview-validation" id="preview-validation"></div>
+                </div>
+                <div id="preview-content" class="preview-content"></div>
+                <div class="preview-actions">
+                    <button class="btn btn-success btn-large" id="btn-accept-blueprint" style="display: none;" data-i18n="planner.acceptBlueprint">Accept Blueprint</button>
+                    <button class="btn btn-secondary" id="btn-refine-toggle" style="display: none;" data-i18n="planner.refineBlueprint">Refine Blueprint</button>
+                </div>
+                <div id="refine-section" class="refine-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="refine-feedback" class="form-label" data-i18n="planner.refinementFeedback">Refinement Feedback</label>
+                        <textarea id="refine-feedback" class="form-textarea" rows="3"
+                                  data-i18n-placeholder="planner.refinePlaceholder" placeholder="Describe what changes you'd like to see..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="btn-refine-blueprint" data-i18n="planner.refineBlueprint">Refine Blueprint</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Outcome Modal -->
+<div id="outcome-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="outcome-modal-title" data-i18n="planner.addLearningOutcome">Add Learning Outcome</h2>
+        </div>
+        <form id="outcome-form" class="modal-form">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="outcome-audience" class="form-label required" data-i18n="planner.audience">Audience</label>
+                    <input type="text" id="outcome-audience" name="audience" class="form-input"
+                           required data-i18n-placeholder="planner.audiencePlaceholder" placeholder="e.g., Learners, Students, Developers">
+                    <span class="form-hint" data-i18n="planner.audienceHint">Who will achieve this outcome?</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="outcome-behavior" class="form-label required" data-i18n="planner.behavior">Behavior</label>
+                    <input type="text" id="outcome-behavior" name="behavior" class="form-input"
+                           required data-i18n-placeholder="planner.behaviorPlaceholder" placeholder="e.g., implement a REST API, analyze data patterns">
+                    <span class="form-hint" data-i18n="planner.behaviorHint">What observable action will they perform?</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="outcome-condition" class="form-label" data-i18n="planner.condition">Condition</label>
+                    <input type="text" id="outcome-condition" name="condition" class="form-input"
+                           data-i18n-placeholder="planner.conditionPlaceholder" placeholder="e.g., given a dataset, using Python libraries">
+                    <span class="form-hint" data-i18n="planner.conditionHint">Under what circumstances?</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="outcome-degree" class="form-label" data-i18n="planner.degree">Degree</label>
+                    <input type="text" id="outcome-degree" name="degree" class="form-input"
+                           data-i18n-placeholder="planner.degreePlaceholder" placeholder="e.g., with 90% accuracy, within 30 minutes">
+                    <span class="form-hint" data-i18n="planner.degreeHint">To what standard or level?</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="outcome-bloom" class="form-label"><span data-i18n="planner.bloomsLevel">Bloom's Level</span>
+                        <button class="help-btn" data-help="blooms-taxonomy" title="Learn about Bloom's taxonomy">?</button>
+                    </label>
+                    <select id="outcome-bloom" name="bloom_level" class="form-select">
+                        <option value="remember" data-i18n="planner.bloomRemember">Remember</option>
+                        <option value="understand" data-i18n="planner.bloomUnderstand">Understand</option>
+                        <option value="apply" selected data-i18n="planner.bloomApply">Apply</option>
+                        <option value="analyze" data-i18n="planner.bloomAnalyze">Analyze</option>
+                        <option value="evaluate" data-i18n="planner.bloomEvaluate">Evaluate</option>
+                        <option value="create" data-i18n="planner.bloomCreate">Create</option>
+                    </select>
+                    <span class="form-hint" data-i18n="planner.bloomHint">Cognitive complexity level</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="btn-save-outcome" data-i18n="planner.saveOutcome">Save Outcome</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-outcome-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="planner.deleteOutcome">Delete Learning Outcome</h2>
+        </div>
+        <div class="modal-body">
+            <p class="delete-warning" data-i18n="planner.deleteOutcomeConfirm">Are you sure you want to delete this learning outcome?</p>
+            <p class="delete-warning" data-i18n="common.cannotUndo">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btn-confirm-delete-outcome" data-i18n="planner.deleteOutcome">Delete Outcome</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/components/help.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pages/planner.js') }}"></script>
+{% endblock %}

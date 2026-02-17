@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Textbook - {{ course.title }} - Course Builder Studio{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/textbook.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="textbook">
+    <!-- Left Panel - Chapter List & Tabs -->
+    <div class="textbook-panel-left">
+        <!-- Tab Navigation -->
+        <div class="textbook-tabs">
+            <button class="tab-btn active" data-tab="chapters" data-i18n="textbook.chapters">Chapters</button>
+            <button class="tab-btn" data-tab="glossary" data-i18n="textbook.glossary">Glossary</button>
+            <button class="tab-btn" data-tab="settings" data-i18n="common.settings">Settings</button>
+        </div>
+
+        <!-- Chapters Tab -->
+        <div class="tab-content active" id="tab-chapters">
+            <div class="panel-section">
+                <div class="section-header">
+                    <h3 data-i18n="textbook.chapters">Chapters</h3>
+                    <button class="btn btn-primary btn-small" id="btn-generate-all" data-i18n="textbook.generateAll">Generate All</button>
+                </div>
+                <div class="chapter-list" id="chapter-list">
+                    <!-- Chapters loaded dynamically -->
+                    <div class="loading-message" data-i18n="textbook.loadingChapters">Loading chapters...</div>
+                </div>
+            </div>
+            <div class="generation-progress" id="generation-progress" style="display: none;">
+                <div class="progress-text"><span data-i18n="textbook.generatingChapters">Generating chapters:</span> <span id="progress-count">0/0</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Glossary Tab -->
+        <div class="tab-content" id="tab-glossary">
+            <div class="panel-section">
+                <div class="section-header">
+                    <h3 data-i18n="textbook.glossaryTerms">Glossary Terms</h3>
+                    <button class="btn btn-primary btn-small" id="btn-add-term" data-i18n="textbook.addTerm">+ Add Term</button>
+                </div>
+                <div class="glossary-list" id="glossary-list">
+                    <!-- Glossary terms loaded dynamically -->
+                    <div class="empty-state">
+                        <p data-i18n="textbook.noTermsYet">No glossary terms yet.</p>
+                        <p class="hint" data-i18n="textbook.generateToPopulate">Generate chapters to populate glossary, or add terms manually.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" id="tab-settings">
+            <div class="panel-section">
+                <h3 data-i18n="textbook.textbookSettings">Textbook Settings</h3>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="textbook.textbookTitle">Textbook Title</label>
+                    <input type="text" id="textbook-title" class="form-input"
+                           value="{{ course.title }}" data-i18n-placeholder="textbook.enterTitle" placeholder="Enter textbook title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="textbook.courseInfo">Course Information</label>
+                    <textarea id="textbook-info" class="form-textarea" rows="3"
+                              data-i18n-placeholder="textbook.addCourseInfo" placeholder="Add author, course info, or notes...">{{ course.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="textbook.audienceLevel">Audience Level</label>
+                    <input type="text" id="textbook-audience" class="form-input"
+                           value="{{ course.audience_level }}" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel - Preview -->
+    <div class="textbook-panel-right">
+        <div class="preview-header">
+            <h2 id="preview-title" data-i18n="textbook.preview">Preview</h2>
+            <div class="preview-actions">
+                <button class="btn btn-ghost btn-small" id="btn-view-full" data-i18n="textbook.viewFullTextbook">View Full Textbook</button>
+            </div>
+        </div>
+        <div class="preview-content" id="preview-content">
+            <div class="preview-empty">
+                <div class="empty-icon">&#128214;</div>
+                <p data-i18n="textbook.selectChapter">Select a chapter to preview</p>
+                <p class="hint" data-i18n="textbook.orGenerateChapters">Or generate chapters from learning outcomes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Term Modal -->
+<div id="term-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="term-modal-title" data-i18n="textbook.addGlossaryTerm">Add Glossary Term</h2>
+        </div>
+        <form id="term-form" class="modal-form">
+            <div class="modal-body">
+                <input type="hidden" id="term-id" name="term_id">
+                <input type="hidden" id="term-chapter-id" name="chapter_id">
+                <div class="form-group">
+                    <label for="term-text" class="form-label required" data-i18n="textbook.term">Term</label>
+                    <input type="text" id="term-text" name="term" class="form-input"
+                           required data-i18n-placeholder="textbook.enterTerm" placeholder="Enter term">
+                </div>
+                <div class="form-group">
+                    <label for="term-definition" class="form-label required" data-i18n="textbook.definition">Definition</label>
+                    <textarea id="term-definition" name="definition" class="form-textarea"
+                              rows="3" required data-i18n-placeholder="textbook.enterDefinition" placeholder="Enter definition"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="term-context" class="form-label" data-i18n="textbook.context">Context</label>
+                    <input type="text" id="term-context" name="context" class="form-input"
+                           data-i18n-placeholder="textbook.optionalContext" placeholder="Optional context or usage">
+                </div>
+                <div class="form-group">
+                    <label for="term-chapter-select" class="form-label" data-i18n="textbook.associatedChapter">Associated Chapter</label>
+                    <select id="term-chapter-select" class="form-select">
+                        <option value="" data-i18n="textbook.noneGeneral">None (General)</option>
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="btn-save-term" data-i18n="textbook.saveTerm">Save Term</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Term Confirmation Modal -->
+<div id="delete-term-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 data-i18n="textbook.deleteTerm">Delete Term</h2>
+        </div>
+        <div class="modal-body">
+            <p class="delete-warning"><span data-i18n="textbook.deleteTermConfirm">Are you sure you want to delete the term</span> <strong id="delete-term-name"></strong>?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btn-confirm-delete-term" data-i18n="common.delete">Delete</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/pages/textbook.js') }}"></script>
+<script>
+    // Initialize textbook controller with course ID
+    document.addEventListener('DOMContentLoaded', () => {
+        const courseId = '{{ course.id }}';
+        window.textbookController = new TextbookController(courseId);
+        window.textbookController.init();
+    });
+</script>
+{% endblock %}
