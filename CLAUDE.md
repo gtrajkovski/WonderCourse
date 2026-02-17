@@ -109,7 +109,7 @@ Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`. App runs without key 
 
 ## v2.0 Features (In Progress)
 
-**Content Variants & Depth Layers (Phase 1):**
+**Phase 1: Content Variants & Depth Layers**
 - `VariantType` enum: PRIMARY, TRANSCRIPT, AUDIO_ONLY, ILLUSTRATED, INFOGRAPHIC, GUIDED, CHALLENGE, SELF_CHECK
 - `DepthLevel` enum: ESSENTIAL (key points), STANDARD (full), ADVANCED (extended)
 - `ContentVariant` dataclass stores variant content with generation tracking
@@ -117,10 +117,13 @@ Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`. App runs without key 
 - Variant API: `/api/courses/<id>/activities/<id>/variants`
 - `TranscriptVariantGenerator` transforms video scripts to transcripts
 
-## Environment Setup
-
-Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`. App runs without key but AI features are disabled.
+**Phase 2: UDL Implementation**
+- Variant selector UI in Studio page (tabs + depth pills)
+- Generate variant modal for on-demand generation
+- `AudioNarrationGenerator` for TTS-optimized narration scripts
+- Learner preference mapping (`PREFERENCE_TO_VARIANTS`)
+- Recommended variants endpoint: `/api/courses/<id>/activities/<id>/variants/recommended`
 
 ## Project Status
 
-v2.0-dev (Phase 1 Foundation in progress). Planning docs in `.planning/` (PROJECT.md, ROADMAP.md, v2.0-IDEAS.md).
+v2.0-dev (Phase 2 UDL Implementation complete). Planning docs in `.planning/` (PROJECT.md, ROADMAP.md, v2.0-IDEAS.md).

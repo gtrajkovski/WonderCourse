@@ -193,6 +193,153 @@ class TranscriptVariantGenerator(VariantGenerator):
         return "\n".join(essential_lines)
 
 
+class AudioNarrationGenerator(VariantGenerator):
+    """Generates audio narration script from primary content.
+
+    Transforms primary content into a format optimized for text-to-speech:
+    - Shorter sentences for natural pacing
+    - Pronunciation hints for technical terms
+    - Natural speech patterns and transitions
+    - No visual references that don't make sense in audio
+    """
+
+    @property
+    def source_variant_type(self) -> VariantType:
+        return VariantType.PRIMARY
+
+    @property
+    def target_variant_type(self) -> VariantType:
+        return VariantType.AUDIO_ONLY
+
+    @ai_retry
+    def transform(
+        self,
+        source_content: str,
+        depth_level: DepthLevel = DepthLevel.STANDARD,
+        **kwargs
+    ) -> Tuple[str, Dict[str, Any]]:
+        """Transform primary content into audio narration script.
+
+        Uses AI to rewrite content for optimal TTS delivery.
+        """
+        try:
+            content_data = json.loads(source_content)
+        except json.JSONDecodeError:
+            # If not valid JSON, treat as plain text
+            content_data = {"text": source_content}
+
+        # Extract readable text from content
+        text_content = self._extract_text(content_data)
+
+        system_prompt = """You are an expert at converting written content into audio narration scripts optimized for text-to-speech (TTS) delivery.
+
+Your output should:
+1. Use shorter sentences (15-20 words max) for natural pacing
+2. Replace visual references ("as shown above", "in the diagram") with descriptive language
+3. Add natural transitions between sections
+4. Include pronunciation hints in [brackets] for technical terms or acronyms
+5. Use conversational but professional tone
+6. Avoid bullet points - convert to flowing prose
+7. Include pause markers with "..." for natural breathing points
+
+Return a JSON object with:
+- title: The title of the content
+- narration: The full narration text ready for TTS
+- duration_estimate_minutes: Estimated narration duration at 150 WPM
+- pronunciation_notes: Array of {term, pronunciation} for technical terms"""
+
+        user_prompt = f"""Convert this content into an audio narration script:
+
+{text_content}
+
+Target depth level: {depth_level.value}
+{"Compress to essential points only." if depth_level == DepthLevel.ESSENTIAL else ""}
+{"Expand with additional detail and examples." if depth_level == DepthLevel.ADVANCED else ""}"""
+
+        response = self.client.messages.create(
+            model=self.model,
+            max_tokens=Config.MAX_TOKENS,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_prompt}]
+        )
+
+        result_text = response.content[0].text
+
+        # Try to extract JSON
+        if "```json" in result_text:
+            start = result_text.find("```json") + 7
+            end = result_text.find("```", start)
+            if end > start:
+                result_text = result_text[start:end].strip()
+        elif "```" in result_text:
+            start = result_text.find("```") + 3
+            end = result_text.find("```", start)
+            if end > start:
+                result_text = result_text[start:end].strip()
+
+        try:
+            result_data = json.loads(result_text)
+        except json.JSONDecodeError:
+            # Fallback to wrapping as narration
+            result_data = {
+                "title": content_data.get("title", "Audio Narration"),
+                "narration": result_text,
+                "duration_estimate_minutes": len(result_text.split()) / 150.0,
+                "pronunciation_notes": []
+            }
+
+        word_count = len(result_data.get("narration", "").split())
+        duration = result_data.get("duration_estimate_minutes", word_count / 150.0)
+
+        return json.dumps(result_data), {
+            "word_count": word_count,
+            "estimated_duration_minutes": duration,
+        }
+
+    def _extract_text(self, content_data: Dict) -> str:
+        """Extract readable text from various content formats."""
+        parts = []
+
+        if isinstance(content_data, str):
+            return content_data
+
+        # Handle title
+        if "title" in content_data:
+            parts.append(f"Title: {content_data['title']}")
+
+        # Handle video script sections
+        sections = ["hook", "objective", "content", "ivq", "summary", "cta"]
+        for section in sections:
+            if section in content_data and content_data[section]:
+                section_data = content_data[section]
+                if isinstance(section_data, dict):
+                    if section_data.get("script_text"):
+                        parts.append(section_data["script_text"])
+                elif isinstance(section_data, str):
+                    parts.append(section_data)
+
+        # Handle reading content
+        if "introduction" in content_data:
+            parts.append(content_data["introduction"])
+
+        if "sections" in content_data:
+            for section in content_data["sections"]:
+                if isinstance(section, dict):
+                    if section.get("heading") or section.get("title"):
+                        parts.append(section.get("heading") or section.get("title"))
+                    if section.get("body") or section.get("content"):
+                        parts.append(section.get("body") or section.get("content"))
+
+        if "conclusion" in content_data:
+            parts.append(content_data["conclusion"])
+
+        # Handle generic text field
+        if "text" in content_data:
+            parts.append(content_data["text"])
+
+        return "\n\n".join(parts) if parts else str(content_data)
+
+
 class DepthAdapter:
     """Adapts content between depth levels using AI.
 
@@ -274,6 +421,7 @@ Return the adapted content in the same JSON format."""
 # Registry of available variant generators by (source_type, target_type)
 VARIANT_GENERATORS = {
     (VariantType.PRIMARY, VariantType.TRANSCRIPT): TranscriptVariantGenerator,
+    (VariantType.PRIMARY, VariantType.AUDIO_ONLY): AudioNarrationGenerator,
 }
 
 

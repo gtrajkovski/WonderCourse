@@ -74,6 +74,23 @@
             </div>
             <span class="preview-badge" id="preview-badge" style="display: none;"></span>
         </div>
+        <!-- Variant Selector -->
+        <div class="variant-selector" id="variant-selector" style="display: none;">
+            <div class="variant-tabs" id="variant-tabs">
+                <button class="variant-tab active" data-variant="primary" data-depth="standard">
+                    Primary
+                </button>
+                <!-- Dynamic tabs for generated variants -->
+            </div>
+            <div class="depth-pills" id="depth-pills" style="display: none;">
+                <span class="depth-pill" data-depth="essential">Essential</span>
+                <span class="depth-pill active" data-depth="standard">Standard</span>
+                <span class="depth-pill" data-depth="advanced">Advanced</span>
+            </div>
+            <button class="btn btn-sm btn-secondary" id="btn-add-variant" title="Generate a new content variant">
+                + Add Variant
+            </button>
+        </div>
         <div class="preview-body" id="preview-body" data-loading="false">
             <!-- Skeleton for content loading -->
             {% from 'partials/skeleton.html' import skeleton_content %}
@@ -260,6 +277,39 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-modal-close data-i18n="common.cancel">Cancel</button>
             <button type="button" class="btn btn-primary" id="btn-save-editor" data-i18n="studio.saveChanges">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Generate Variant Modal -->
+<div id="variant-modal" class="modal" aria-hidden="true" data-modal>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h2>Generate Content Variant</h2>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="variant-type-select">Variant Type</label>
+                <select id="variant-type-select" class="form-select">
+                    <option value="transcript">Transcript (text version)</option>
+                    <option value="audio_only">Audio Narration Script</option>
+                </select>
+                <span class="form-hint">Select the type of variant to generate from primary content.</span>
+            </div>
+            <div class="form-group">
+                <label for="depth-level-select">Depth Level</label>
+                <select id="depth-level-select" class="form-select">
+                    <option value="essential">Essential (key points only)</option>
+                    <option value="standard" selected>Standard (full content)</option>
+                    <option value="advanced">Advanced (expanded detail)</option>
+                </select>
+                <span class="form-hint">Adjust complexity level for different learner needs.</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+            <button type="button" class="btn btn-primary" id="btn-generate-variant">Generate Variant</button>
         </div>
     </div>
 </div>

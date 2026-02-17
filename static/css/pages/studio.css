@@ -926,3 +926,147 @@
   color: var(--accent-primary);
   font-weight: 500;
 }
+
+/* ===========================
+   Variant Selector
+   =========================== */
+
+.variant-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.variant-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.variant-tab {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.variant-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-input);
+}
+
+.variant-tab.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.variant-tab.generating {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+/* Depth Pills */
+.depth-pills {
+  display: flex;
+  gap: 6px;
+  margin-left: var(--spacing-sm);
+  padding-left: var(--spacing-sm);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.depth-pill {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.depth-pill:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.depth-pill.active {
+  background: var(--accent-secondary);
+  color: var(--accent-primary);
+}
+
+.depth-pill.unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Variant Modal Styles */
+.modal-small {
+  max-width: 450px;
+  width: 90%;
+}
+
+.modal-small .form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-small .form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.modal-small .form-select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+}
+
+.modal-small .form-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.modal-small .form-hint {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+/* Variant Tab Badge */
+.variant-tab .variant-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.variant-tab .variant-badge.generated {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.variant-tab .variant-badge.draft {
+  background: var(--bg-input);
+  color: var(--text-muted);
+}

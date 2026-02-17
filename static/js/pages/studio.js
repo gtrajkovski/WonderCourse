@@ -75,11 +75,17 @@ class StudioController {
 
     // Notes state
     this.activityNotes = [];
+
+    // Variant state
+    this.selectedVariant = { type: 'primary', depth: 'standard' };
+    this.availableVariants = [];  // From /variants API
+    this.variantModal = null;
   }
 
   async init() {
-    // Initialize modal
+    // Initialize modals
     this.editorModal = new Modal('editor-modal');
+    this.variantModal = new Modal('variant-modal');
 
     // Initialize elapsed timer
     this.elapsedTimer = new ElapsedTimer('elapsed-seconds');
@@ -236,6 +242,43 @@ class StudioController {
         }
       });
     }
+
+    // Variant tabs delegation
+    const variantTabs = document.getElementById('variant-tabs');
+    if (variantTabs) {
+      variantTabs.addEventListener('click', (e) => {
+        const tab = e.target.closest('.variant-tab');
+        if (tab) {
+          const variantType = tab.dataset.variant;
+          const depthLevel = tab.dataset.depth || 'standard';
+          this.handleVariantSelect(variantType, depthLevel);
+        }
+      });
+    }
+
+    // Depth pills delegation
+    const depthPills = document.getElementById('depth-pills');
+    if (depthPills) {
+      depthPills.addEventListener('click', (e) => {
+        const pill = e.target.closest('.depth-pill');
+        if (pill && !pill.classList.contains('unavailable')) {
+          const depth = pill.dataset.depth;
+          this.handleVariantSelect(this.selectedVariant.type, depth);
+        }
+      });
+    }
+
+    // Add variant button
+    const btnAddVariant = document.getElementById('btn-add-variant');
+    if (btnAddVariant) {
+      btnAddVariant.addEventListener('click', () => this.openVariantModal());
+    }
+
+    // Generate variant button in modal
+    const btnGenerateVariant = document.getElementById('btn-generate-variant');
+    if (btnGenerateVariant) {
+      btnGenerateVariant.addEventListener('click', () => this.handleGenerateVariant());
+    }
   }
 
   /**
@@ -272,8 +315,14 @@ class StudioController {
     // Find the activity in course data
     this.selectedActivity = this.findActivity(activityId);
 
+    // Reset variant selection to primary/standard
+    this.selectedVariant = { type: 'primary', depth: 'standard' };
+
     // Update UI selection
     this.updateActivityListSelection(activityId);
+
+    // Load variants for this activity
+    await this.loadVariants();
 
     // Load and render preview
     await this.renderPreview();
@@ -1163,6 +1212,314 @@ class StudioController {
       }
     }
   }
+
+  // ===========================
+  // Variant Methods
+  // ===========================
+
+  /**
+   * Load available variants for current activity
+   */
+  async loadVariants() {
+    if (!this.selectedActivity) {
+      this.availableVariants = [];
+      return;
+    }
+
+    try {
+      const response = await api.get(
+        `/courses/${this.courseId}/activities/${this.selectedActivity.id}/variants`
+      );
+      this.availableVariants = response.variants || [];
+      this.renderVariantTabs();
+    } catch (error) {
+      console.warn('Failed to load variants:', error);
+      this.availableVariants = [];
+    }
+  }
+
+  /**
+   * Render variant tabs based on available variants
+   */
+  renderVariantTabs() {
+    const variantTabs = document.getElementById('variant-tabs');
+    const variantSelector = document.getElementById('variant-selector');
+    const depthPills = document.getElementById('depth-pills');
+
+    if (!variantTabs || !this.selectedActivity) {
+      if (variantSelector) variantSelector.style.display = 'none';
+      return;
+    }
+
+    // Only show variant selector if activity has content
+    const hasContent = this.selectedActivity.content &&
+                       this.selectedActivity.build_state !== 'draft';
+    if (!hasContent) {
+      variantSelector.style.display = 'none';
+      return;
+    }
+
+    variantSelector.style.display = 'flex';
+
+    // Group variants by type
+    const variantsByType = {};
+    for (const v of this.availableVariants) {
+      if (!variantsByType[v.variant_type]) {
+        variantsByType[v.variant_type] = [];
+      }
+      variantsByType[v.variant_type].push(v);
+    }
+
+    // Build tabs HTML
+    let html = '';
+    const types = ['primary', ...Object.keys(variantsByType).filter(t => t !== 'primary')];
+
+    for (const type of types) {
+      const variants = variantsByType[type] || [];
+      const hasGenerated = variants.some(v => v.generated);
+      const isActive = type === this.selectedVariant.type;
+      const label = this.formatVariantType(type);
+
+      html += `
+        <button class="variant-tab${isActive ? ' active' : ''}"
+                data-variant="${type}"
+                data-depth="${this.selectedVariant.depth}">
+          ${label}
+          ${hasGenerated ? '<span class="variant-badge generated">&#10003;</span>' : ''}
+        </button>
+      `;
+    }
+
+    variantTabs.innerHTML = html;
+
+    // Update depth pills availability
+    if (depthPills) {
+      const currentTypeVariants = variantsByType[this.selectedVariant.type] || [];
+      depthPills.style.display = 'flex';
+
+      depthPills.querySelectorAll('.depth-pill').forEach(pill => {
+        const depth = pill.dataset.depth;
+        const variant = currentTypeVariants.find(v => v.depth_level === depth);
+        const isAvailable = depth === 'standard' || (variant && variant.generated);
+        const isActive = depth === this.selectedVariant.depth;
+
+        pill.classList.toggle('active', isActive);
+        pill.classList.toggle('unavailable', !isAvailable && depth !== 'standard');
+      });
+    }
+  }
+
+  /**
+   * Format variant type for display
+   */
+  formatVariantType(type) {
+    const typeMap = {
+      'primary': 'Primary',
+      'transcript': 'Transcript',
+      'audio_only': 'Audio',
+      'illustrated': 'Illustrated',
+      'infographic': 'Infographic',
+      'guided': 'Guided',
+      'challenge': 'Challenge',
+      'self_check': 'Self-Check'
+    };
+    return typeMap[type] || type;
+  }
+
+  /**
+   * Handle variant selection
+   */
+  async handleVariantSelect(variantType, depthLevel) {
+    this.selectedVariant = { type: variantType, depth: depthLevel };
+
+    // Update tab UI
+    document.querySelectorAll('.variant-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.variant === variantType);
+    });
+
+    // Update depth pills UI
+    document.querySelectorAll('.depth-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.depth === depthLevel);
+    });
+
+    // Re-render content with selected variant
+    await this.renderVariantContent();
+  }
+
+  /**
+   * Render content for selected variant
+   */
+  async renderVariantContent() {
+    const previewContent = document.getElementById('preview-content');
+
+    if (!this.selectedActivity) return;
+
+    // For primary/standard, use main activity content
+    if (this.selectedVariant.type === 'primary' && this.selectedVariant.depth === 'standard') {
+      this.renderContent(this.selectedActivity);
+      this.updateMetadata(this.selectedActivity);
+      return;
+    }
+
+    // Find variant in available variants
+    const variant = this.availableVariants.find(
+      v => v.variant_type === this.selectedVariant.type &&
+           v.depth_level === this.selectedVariant.depth
+    );
+
+    if (!variant || !variant.generated) {
+      previewContent.innerHTML = `
+        <div class="preview-empty" style="height: auto; padding: 2rem;">
+          <p>This variant has not been generated yet.</p>
+          <button class="btn btn-primary" onclick="window.studioController.openVariantModal()">
+            Generate Variant
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    // Fetch full variant content
+    try {
+      const response = await api.get(
+        `/courses/${this.courseId}/activities/${this.selectedActivity.id}/variants/${this.selectedVariant.type}?depth=${this.selectedVariant.depth}`
+      );
+
+      // Render variant content
+      this.renderVariantContentData(response);
+
+      // Update metadata with variant info
+      document.getElementById('meta-word-count').textContent = response.word_count || 0;
+      document.getElementById('meta-duration').textContent =
+        `${(response.estimated_duration_minutes || 0).toFixed(1)} min`;
+    } catch (error) {
+      toast.error(`Failed to load variant: ${error.message}`);
+    }
+  }
+
+  /**
+   * Render variant content based on type
+   */
+  renderVariantContentData(variant) {
+    const previewContent = document.getElementById('preview-content');
+
+    let content = variant.content;
+    if (typeof content === 'string') {
+      try {
+        content = JSON.parse(content);
+      } catch (e) {
+        // Plain text
+        previewContent.innerHTML = `<div class="content-section"><div class="content-section-body">${this.escapeHtml(content)}</div></div>`;
+        return;
+      }
+    }
+
+    // Render based on variant type
+    if (variant.variant_type === 'transcript') {
+      previewContent.innerHTML = this.renderTranscript(content);
+    } else {
+      previewContent.innerHTML = this.renderGenericContent(content);
+    }
+  }
+
+  /**
+   * Render transcript variant
+   */
+  renderTranscript(content) {
+    let html = '';
+
+    if (content.title) {
+      html += `<h2 style="margin-bottom: 1.5rem; color: var(--accent);">${this.escapeHtml(content.title)}</h2>`;
+    }
+
+    if (content.learning_objective) {
+      html += `<div class="learning-objective" style="padding: 1rem; background: var(--info-bg); border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+        <strong>Learning Objective:</strong> ${this.escapeHtml(content.learning_objective)}
+      </div>`;
+    }
+
+    if (content.content) {
+      // Convert markdown-ish content to HTML
+      const formatted = content.content
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/^## (.+)$/gm, '<h2 style="margin-top: 1.5rem; color: var(--accent-light);">$1</h2>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+      html += `<div class="transcript-content"><p>${formatted}</p></div>`;
+    }
+
+    return html || '<p class="text-muted">No transcript content.</p>';
+  }
+
+  /**
+   * Open variant generation modal
+   */
+  openVariantModal() {
+    if (!this.selectedActivity) {
+      toast.error('Please select an activity first');
+      return;
+    }
+
+    if (!this.selectedActivity.content || this.selectedActivity.build_state === 'draft') {
+      toast.error('Generate primary content first before creating variants');
+      return;
+    }
+
+    // Update available options based on content type
+    const variantTypeSelect = document.getElementById('variant-type-select');
+    const contentType = this.selectedActivity.content_type?.value || this.selectedActivity.content_type;
+
+    // Set available variant types based on content type
+    let options = '<option value="transcript">Transcript (text version)</option>';
+    if (contentType === 'video') {
+      options = `
+        <option value="transcript">Transcript (text version)</option>
+        <option value="audio_only">Audio Narration Script</option>
+      `;
+    } else if (contentType === 'reading') {
+      options = `
+        <option value="audio_only">Audio Narration Script</option>
+      `;
+    }
+    variantTypeSelect.innerHTML = options;
+
+    this.variantModal.open();
+  }
+
+  /**
+   * Handle generate variant button click
+   */
+  async handleGenerateVariant() {
+    const variantType = document.getElementById('variant-type-select').value;
+    const depthLevel = document.getElementById('depth-level-select').value;
+
+    const btnGenerate = document.getElementById('btn-generate-variant');
+    btnGenerate.disabled = true;
+    btnGenerate.textContent = 'Generating...';
+
+    try {
+      const response = await api.post(
+        `/courses/${this.courseId}/activities/${this.selectedActivity.id}/variants/generate`,
+        { variant_type: variantType, depth_level: depthLevel }
+      );
+
+      toast.success('Variant generated successfully');
+      this.variantModal.close();
+
+      // Reload variants and select the new one
+      await this.loadVariants();
+      this.handleVariantSelect(variantType, depthLevel);
+    } catch (error) {
+      toast.error(`Failed to generate variant: ${error.message}`);
+    } finally {
+      btnGenerate.disabled = false;
+      btnGenerate.textContent = 'Generate Variant';
+    }
+  }
+
+  // ===========================
+  // End Variant Methods
+  // ===========================
 
   /**
    * Update controls based on activity state

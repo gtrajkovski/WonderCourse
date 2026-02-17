@@ -9,10 +9,20 @@ from flask_login import login_required, current_user
 from datetime import datetime
 
 from src.core.models import (
-    VariantType, DepthLevel, ContentVariant, BuildState, ContentType
+    VariantType, DepthLevel, ContentVariant, BuildState, ContentType,
+    LearningPreference, LearnerProfile
 )
 from src.collab.decorators import require_permission
 from src.generators.variant_generators import get_variant_generator, DepthAdapter
+
+# Mapping of learner preferences to recommended variant types
+PREFERENCE_TO_VARIANTS = {
+    LearningPreference.VISUAL: [VariantType.ILLUSTRATED, VariantType.INFOGRAPHIC, VariantType.PRIMARY],
+    LearningPreference.AUDITORY: [VariantType.AUDIO_ONLY, VariantType.PRIMARY],
+    LearningPreference.READING: [VariantType.TRANSCRIPT, VariantType.PRIMARY],
+    LearningPreference.HANDS_ON: [VariantType.GUIDED, VariantType.CHALLENGE, VariantType.PRIMARY],
+    LearningPreference.MIXED: [VariantType.PRIMARY],
+}
 
 # Create Blueprint
 variants_bp = Blueprint('variants', __name__)
@@ -379,3 +389,69 @@ def delete_variant(course_id, activity_id, variant_type):
     _project_store.save(str(current_user.id), course)
 
     return jsonify({"message": "Variant deleted"})
+
+
+@variants_bp.route('/courses/<course_id>/activities/<activity_id>/variants/recommended', methods=['GET'])
+@login_required
+@require_permission('view')
+def get_recommended_variants(course_id, activity_id):
+    """Get recommended variants based on learner profile.
+
+    Query params:
+        learning_preference: Learning preference value (visual, auditory, reading, hands_on, mixed)
+
+    Returns:
+        200 with list of recommended variant types sorted by relevance
+        404 if course or activity not found
+    """
+    course = _project_store.load(str(current_user.id), course_id)
+    if not course:
+        return jsonify({"error": "Course not found"}), 404
+
+    module, lesson, activity = _find_activity(course, activity_id)
+    if not activity:
+        return jsonify({"error": "Activity not found"}), 404
+
+    # Get learning preference from query params
+    pref_str = request.args.get("learning_preference", "mixed")
+    try:
+        learning_pref = LearningPreference(pref_str)
+    except ValueError:
+        learning_pref = LearningPreference.MIXED
+
+    # Get recommended variant types for this preference
+    recommended_types = PREFERENCE_TO_VARIANTS.get(learning_pref, [VariantType.PRIMARY])
+
+    # Get supported variants for this content type
+    supported = SUPPORTED_VARIANTS.get(activity.content_type, [VariantType.PRIMARY])
+
+    # Filter to only supported variants
+    filtered_recommendations = [v for v in recommended_types if v in supported]
+
+    # If no overlap, default to PRIMARY
+    if not filtered_recommendations:
+        filtered_recommendations = [VariantType.PRIMARY]
+
+    # Check which recommended variants are already generated
+    recommendations = []
+    for variant_type in filtered_recommendations:
+        # Check for standard depth first
+        variant = activity.get_variant(variant_type, DepthLevel.STANDARD)
+        is_generated = False
+        if variant_type == VariantType.PRIMARY and activity.content:
+            is_generated = activity.build_state != BuildState.DRAFT
+        elif variant:
+            is_generated = variant.build_state != BuildState.DRAFT
+
+        recommendations.append({
+            "variant_type": variant_type.value,
+            "depth_level": "standard",
+            "is_generated": is_generated,
+            "priority": filtered_recommendations.index(variant_type) + 1,
+        })
+
+    return jsonify({
+        "activity_id": activity_id,
+        "learning_preference": learning_pref.value,
+        "recommendations": recommendations,
+    })
