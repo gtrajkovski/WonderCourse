@@ -7,12 +7,11 @@ Simplified tests focusing on core functionality that's actually testable.
 import pytest
 import json
 import io
-import importlib
 from unittest.mock import patch, MagicMock
 
-# Import the module with keyword name using importlib
-import_module = importlib.import_module('src.import')
-analyzer_module = importlib.import_module('src.import.analyzer')
+# Import from src.importers package
+import src.importers as import_module
+from src.importers import analyzer as analyzer_module
 
 
 @pytest.fixture

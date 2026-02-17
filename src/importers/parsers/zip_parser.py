@@ -7,7 +7,7 @@ Note: SCORM packages (with imsmanifest.xml) are handled by SCORMParser.
 import zipfile
 import io
 from typing import Union, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from .base_parser import BaseParser, ParseResult
 
 
@@ -84,7 +84,7 @@ class ZIPParser(BaseParser):
                 warnings=['ZIP content must be bytes, not string'],
                 provenance={
                     'filename': filename,
-                    'import_time': datetime.utcnow().isoformat() + 'Z',
+                    'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                     'original_format': 'application/zip'
                 }
             )
@@ -137,7 +137,7 @@ class ZIPParser(BaseParser):
                 warnings=warnings,
                 provenance={
                     'filename': filename,
-                    'import_time': datetime.utcnow().isoformat() + 'Z',
+                    'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                     'original_format': 'application/zip'
                 }
             )
@@ -161,7 +161,7 @@ class ZIPParser(BaseParser):
         # Build provenance
         provenance = {
             'filename': filename,
-            'import_time': datetime.utcnow().isoformat() + 'Z',
+            'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             'original_format': 'application/zip'
         }
 

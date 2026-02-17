@@ -2,20 +2,16 @@
 
 import pytest
 from unittest.mock import Mock, MagicMock, patch
-from importlib import import_module
 from src.core.models import ContentType
 
-# Import ContentConverter avoiding keyword issue
-import_pkg = import_module('src.import')
-ContentConverter = import_pkg.ContentConverter
-ConversionResult = import_pkg.ConversionResult
+# Import from src.importers package
+from src.importers import ContentConverter, ConversionResult
 
 
 @pytest.fixture
 def mock_anthropic():
     """Mock Anthropic client for testing."""
-    # Use full module path to avoid keyword issue
-    with patch('src.import.converter.Anthropic') as mock_client_class:
+    with patch('src.importers.converter.Anthropic') as mock_client_class:
         # Create mock client instance
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client

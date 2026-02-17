@@ -5,7 +5,7 @@ Converts Markdown syntax to structured reading/video_script format.
 
 import re
 from typing import Union, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from .base_parser import BaseParser, ParseResult
 
 
@@ -105,7 +105,7 @@ class MarkdownParser(BaseParser):
         # Build provenance
         provenance = {
             'filename': filename,
-            'import_time': datetime.utcnow().isoformat() + 'Z',
+            'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             'original_format': 'text/markdown'
         }
 

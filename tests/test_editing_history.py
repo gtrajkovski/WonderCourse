@@ -2,7 +2,7 @@
 
 import pytest
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import secrets
 
 from src.editing.history import EditHistory, EditCommand, SessionHistoryManager, get_session_manager
@@ -22,7 +22,7 @@ class TestEditHistory:
             action="improve",
             before="old text",
             after="new text",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={"action_type": "ai_suggest"}
         )
 
@@ -42,7 +42,7 @@ class TestEditHistory:
             action="improve",
             before="text1",
             after="text2",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
         cmd2 = EditCommand(
@@ -50,7 +50,7 @@ class TestEditHistory:
             action="expand",
             before="text2",
             after="text3",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
 
@@ -92,7 +92,7 @@ class TestEditHistory:
                 action="improve",
                 before=f"text{i}",
                 after=f"text{i+1}",
-                timestamp=datetime.utcnow().isoformat() + "Z",
+                timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                 metadata={}
             )
             history.push(cmd)
@@ -114,7 +114,7 @@ class TestEditHistory:
             action="improve",
             before="text1",
             after="text2",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
         cmd2 = EditCommand(
@@ -122,7 +122,7 @@ class TestEditHistory:
             action="expand",
             before="text2",
             after="text3",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
 
@@ -143,7 +143,7 @@ class TestEditHistory:
             action="simplify",
             before="text1",
             after="text4",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
         history.push(cmd3)
@@ -178,7 +178,7 @@ class TestEditHistory:
             action="improve",
             before="text1",
             after="text2",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
         history.push(cmd)
@@ -229,7 +229,7 @@ class TestSessionHistoryManager:
             action="improve",
             before="text1",
             after="text2",
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             metadata={}
         )
         history1.push(cmd)

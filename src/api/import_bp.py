@@ -11,11 +11,10 @@ Provides endpoints for:
 
 from flask import Blueprint, request, jsonify, session, redirect, url_for
 from flask_login import login_required, current_user
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 import io
 import os
-from importlib import import_module
 
 from src.core.models import BuildState, ContentType
 from src.collab.decorators import require_permission
@@ -44,12 +43,11 @@ def init_import_bp(project_store):
     global _project_store, _converter, _url_fetcher, _google_client
     _project_store = project_store
 
-    # Import ContentConverter from src.import package
-    # Using __import__ to handle 'import' keyword conflict
+    # Import from src.importers package
     try:
-        import_module_obj = __import__('src.import', fromlist=['ContentConverter', 'URLFetcher', 'GoogleDocsClient'])
-        _converter = import_module_obj.ContentConverter()
-        _url_fetcher = import_module_obj.URLFetcher()
+        from src.importers import ContentConverter, URLFetcher, GoogleDocsClient
+        _converter = ContentConverter()
+        _url_fetcher = URLFetcher()
 
         # Initialize Google OAuth client if credentials available
         google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
@@ -57,7 +55,7 @@ def init_import_bp(project_store):
 
         if google_client_id and google_client_secret:
             redirect_uri = f"{Config.APP_URL}/api/import/oauth/google/callback"
-            _google_client = import_module_obj.GoogleDocsClient(
+            _google_client = GoogleDocsClient(
                 client_id=google_client_id,
                 client_secret=google_client_secret,
                 redirect_uri=redirect_uri
@@ -135,8 +133,7 @@ def analyze_content():
         500 if parsing or analysis fails
     """
     # Import here to avoid circular dependency
-    import_module_obj = import_module('src.import')
-    ImportPipeline = import_module_obj.ImportPipeline
+    from src.importers import ImportPipeline
 
     pipeline = ImportPipeline()
     format_hint = request.args.get('format_hint')
@@ -214,8 +211,7 @@ def import_to_course(course_id):
         422 if content validation fails
     """
     # Import here to avoid circular dependency
-    import_module_obj = import_module('src.import')
-    ImportPipeline = import_module_obj.ImportPipeline
+    from src.importers import ImportPipeline
 
     # Load course
     course = _project_store.load(str(current_user.id), course_id)
@@ -332,7 +328,7 @@ def import_to_course(course_id):
         if activity.build_state == BuildState.DRAFT:
             activity.build_state = BuildState.GENERATED
 
-        activity.updated_at = datetime.utcnow().isoformat()
+        activity.updated_at = datetime.now(timezone.utc).isoformat()
 
         if conflict_action == 'replace':
             conflicts_resolved.append(f'Replaced content for activity {activity.title}')
@@ -381,8 +377,7 @@ def import_to_activity(course_id, activity_id):
         404 if course or activity not found
     """
     # Import here to avoid circular dependency
-    import_module_obj = import_module('src.import')
-    ImportPipeline = import_module_obj.ImportPipeline
+    from src.importers import ImportPipeline
 
     # Load course
     course = _project_store.load(str(current_user.id), course_id)
@@ -448,7 +443,7 @@ def import_to_activity(course_id, activity_id):
     if activity.build_state == BuildState.DRAFT:
         activity.build_state = BuildState.GENERATED
 
-    activity.updated_at = datetime.utcnow().isoformat()
+    activity.updated_at = datetime.now(timezone.utc).isoformat()
 
     # Save course
     _project_store.save(str(current_user.id), course)
@@ -674,7 +669,7 @@ def convert_activity_content(course_id, activity_id):
         if activity.build_state == BuildState.DRAFT:
             activity.build_state = BuildState.GENERATED
 
-        activity.updated_at = datetime.utcnow().isoformat()
+        activity.updated_at = datetime.now(timezone.utc).isoformat()
 
         # Save course with updated activity
         _project_store.save(str(current_user.id), course)

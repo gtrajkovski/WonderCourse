@@ -5,7 +5,7 @@ session-scoped history management and size limits.
 """
 
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Tuple
 import secrets
 
@@ -183,12 +183,12 @@ class SessionHistoryManager:
         if key in self._histories:
             history, _ = self._histories[key]
             # Update last accessed time
-            self._histories[key] = (history, datetime.utcnow())
+            self._histories[key] = (history, datetime.now(timezone.utc))
             return history
 
         # Create new history
         history = EditHistory()
-        self._histories[key] = (history, datetime.utcnow())
+        self._histories[key] = (history, datetime.now(timezone.utc))
         return history
 
     def cleanup_old_sessions(self, max_age_hours: int = 24) -> int:
@@ -200,7 +200,7 @@ class SessionHistoryManager:
         Returns:
             Number of sessions cleaned up
         """
-        cutoff = datetime.utcnow() - timedelta(hours=max_age_hours)
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
 
         # Find old sessions
         old_keys = [

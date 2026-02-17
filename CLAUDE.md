@@ -38,7 +38,7 @@ pip install -r requirements.txt          # Dependencies
 
 **src/ai/** - `AIClient` wraps Anthropic SDK with conversation history. `src/utils/ai_client.py` provides stateless helper.
 
-**Other directories:** `exporters/` (SCORM, DOCX, LMS), `auth/` (Flask-Login, rate limiting), `collab/` (roles, invitations, comments), `import/` (DOCX, HTML, SCORM, QTI parsers), `coach/` (Socratic tutoring), `editing/` (diff, history, autocomplete), `utils/` (duration calc, humanization, preview).
+**Other directories:** `exporters/` (SCORM, DOCX, LMS), `auth/` (Flask-Login, rate limiting), `collab/` (roles, invitations, comments), `importers/` (DOCX, HTML, SCORM, QTI parsers), `coach/` (Socratic tutoring), `editing/` (diff, history, autocomplete), `utils/` (duration calc, humanization, preview).
 
 **Frontend:** Jinja2 + vanilla JS with dark theme (#1a1a2e).
 

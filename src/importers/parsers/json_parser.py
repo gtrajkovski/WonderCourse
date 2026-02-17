@@ -5,7 +5,7 @@ Validates and maps blueprint JSON to Course/Module/Lesson/Activity structure.
 
 import json
 from typing import Union
-from datetime import datetime
+from datetime import datetime, timezone
 from .base_parser import BaseParser, ParseResult
 
 
@@ -81,7 +81,7 @@ class JSONParser(BaseParser):
                 warnings=[f'JSON parse error: {str(e)}'],
                 provenance={
                     'filename': filename,
-                    'import_time': datetime.utcnow().isoformat() + 'Z',
+                    'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                     'original_format': 'application/json'
                 }
             )
@@ -102,7 +102,7 @@ class JSONParser(BaseParser):
         # Build provenance
         provenance = {
             'filename': filename,
-            'import_time': datetime.utcnow().isoformat() + 'Z',
+            'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             'original_format': 'application/json'
         }
 

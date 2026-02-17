@@ -6,7 +6,7 @@ Parses CSV files into quiz question format with validation.
 import csv
 import io
 from typing import Union, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from .base_parser import BaseParser, ParseResult
 
 
@@ -101,7 +101,7 @@ class CSVParser(BaseParser):
                 warnings=warnings,
                 provenance={
                     'filename': filename,
-                    'import_time': datetime.utcnow().isoformat() + 'Z',
+                    'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                     'original_format': 'text/csv'
                 }
             )
@@ -127,7 +127,7 @@ class CSVParser(BaseParser):
         # Build provenance
         provenance = {
             'filename': filename,
-            'import_time': datetime.utcnow().isoformat() + 'Z',
+            'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             'original_format': 'text/csv'
         }
 

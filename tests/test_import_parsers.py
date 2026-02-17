@@ -7,17 +7,17 @@ import pytest
 import json
 import zipfile
 import io
-from importlib import import_module
 
-# Import parsers avoiding keyword issue with 'import' directory name
-parsers_pkg = import_module('src.import.parsers')
-BaseParser = parsers_pkg.BaseParser
-ParseResult = parsers_pkg.ParseResult
-TextParser = parsers_pkg.TextParser
-JSONParser = parsers_pkg.JSONParser
-MarkdownParser = parsers_pkg.MarkdownParser
-CSVParser = parsers_pkg.CSVParser
-ZIPParser = parsers_pkg.ZIPParser
+# Import from src.importers.parsers package
+from src.importers.parsers import (
+    BaseParser,
+    ParseResult,
+    TextParser,
+    JSONParser,
+    MarkdownParser,
+    CSVParser,
+    ZIPParser,
+)
 
 
 class TestParseResult:

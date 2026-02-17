@@ -5,7 +5,7 @@ Detects structure from text formatting and estimates content type.
 
 import re
 from typing import Union
-from datetime import datetime
+from datetime import datetime, timezone
 from .base_parser import BaseParser, ParseResult
 
 
@@ -143,7 +143,7 @@ class TextParser(BaseParser):
         # Build provenance
         provenance = {
             'filename': filename,
-            'import_time': datetime.utcnow().isoformat() + 'Z',
+            'import_time': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             'original_format': 'text/plain'
         }
 

@@ -6,7 +6,7 @@ Provides:
 """
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 import requests
 from google.oauth2.credentials import Credentials
@@ -113,7 +113,7 @@ class URLFetcher:
                 content=content,
                 content_type=content_type,
                 source_url=response.url,  # Final URL after redirects
-                fetched_at=datetime.utcnow().isoformat()
+                fetched_at=datetime.now(timezone.utc).isoformat()
             )
 
         except requests.exceptions.Timeout:
@@ -210,7 +210,7 @@ class GoogleDocsClient:
             credentials = flow.credentials
 
             # Calculate expiry time
-            expires_at = datetime.utcnow() + timedelta(seconds=credentials.expiry.timestamp() - datetime.utcnow().timestamp())
+            expires_at = datetime.now(timezone.utc) + timedelta(seconds=credentials.expiry.timestamp() - datetime.now(timezone.utc).timestamp())
 
             return TokenData(
                 access_token=credentials.token,
@@ -255,7 +255,7 @@ class GoogleDocsClient:
                 content=content,
                 content_type='text/plain',
                 source_url=f"https://docs.google.com/document/d/{doc_id}/edit",
-                fetched_at=datetime.utcnow().isoformat()
+                fetched_at=datetime.now(timezone.utc).isoformat()
             )
 
         except HttpError as e:

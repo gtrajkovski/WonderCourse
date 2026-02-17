@@ -5,15 +5,15 @@ import io
 import zipfile
 from unittest.mock import patch, MagicMock
 
-# Import parsers using importlib to avoid keyword issue
+# Import from src.importers.parsers package
 try:
-    import importlib
-    parsers = importlib.import_module('src.import.parsers')
-    DOCXParser = parsers.DOCXParser
-    HTMLParser = parsers.HTMLParser
-    SCORMParser = parsers.SCORMParser
-    QTIParser = parsers.QTIParser
-    ParseResult = parsers.ParseResult
+    from src.importers.parsers import (
+        DOCXParser,
+        HTMLParser,
+        SCORMParser,
+        QTIParser,
+        ParseResult,
+    )
     PARSERS_AVAILABLE = True
 except ImportError:
     PARSERS_AVAILABLE = False
@@ -39,7 +39,7 @@ class TestDOCXParser:
         assert not parser.can_parse(b'Not a DOCX file')
         assert not parser.can_parse('Plain text')
 
-    @patch('src.import.parsers.docx_parser.DOCX_AVAILABLE', False)
+    @patch('src.importers.parsers.docx_parser.DOCX_AVAILABLE', False)
     def test_unavailable_library(self):
         """Test graceful handling when libraries unavailable."""
         parser = DOCXParser()
@@ -48,8 +48,8 @@ class TestDOCXParser:
         with pytest.raises(ValueError, match="not installed"):
             parser.parse(b'PK\x03\x04')
 
-    @patch('src.import.parsers.docx_parser.Document')
-    @patch('src.import.parsers.docx_parser.mammoth')
+    @patch('src.importers.parsers.docx_parser.Document')
+    @patch('src.importers.parsers.docx_parser.mammoth')
     def test_parse_simple_docx(self, mock_mammoth, mock_document):
         """Test parsing a simple DOCX document."""
         # Mock Document
@@ -91,8 +91,8 @@ class TestDOCXParser:
         assert 'paragraphs' in result.content
         assert 'html' in result.content
 
-    @patch('src.import.parsers.docx_parser.Document')
-    @patch('src.import.parsers.docx_parser.mammoth')
+    @patch('src.importers.parsers.docx_parser.Document')
+    @patch('src.importers.parsers.docx_parser.mammoth')
     def test_detect_lab_content_type(self, mock_mammoth, mock_document):
         """Test detection of lab content type from numbered lists."""
         mock_doc = MagicMock()
@@ -165,7 +165,7 @@ class TestHTMLParser:
         assert not parser.can_parse('Plain text without tags')
         assert not parser.can_parse(b'Binary data')
 
-    @patch('src.import.parsers.html_parser.HTML_AVAILABLE', False)
+    @patch('src.importers.parsers.html_parser.HTML_AVAILABLE', False)
     def test_unavailable_library(self):
         """Test graceful handling when libraries unavailable."""
         parser = HTMLParser()
@@ -298,7 +298,7 @@ class TestSCORMParser:
         parser = SCORMParser()
         assert not parser.can_parse(b'Not a ZIP file')
 
-    @patch('src.import.parsers.scorm_parser.LXML_AVAILABLE', False)
+    @patch('src.importers.parsers.scorm_parser.LXML_AVAILABLE', False)
     def test_unavailable_library(self):
         """Test graceful handling when lxml unavailable."""
         parser = SCORMParser()
@@ -364,7 +364,7 @@ class TestQTIParser:
         assert not parser.can_parse('Plain text')
         assert not parser.can_parse('<html><body></body></html>')
 
-    @patch('src.import.parsers.qti_parser.LXML_AVAILABLE', False)
+    @patch('src.importers.parsers.qti_parser.LXML_AVAILABLE', False)
     def test_unavailable_library(self):
         """Test graceful handling when lxml unavailable."""
         parser = QTIParser()

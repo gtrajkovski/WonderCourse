@@ -6,7 +6,7 @@ Provides dashboard UI and REST API for course management.
 import os
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.config import Config
 from src.core.project_store import ProjectStore
@@ -770,7 +770,7 @@ def import_course():
     """
     from src.collab.decorators import ensure_owner_collaborator
     import uuid
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     data = request.get_json()
     if not data:
@@ -815,7 +815,7 @@ def import_course():
                         activity['word_count'] = 0
 
         # Update timestamps
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         course_data['created_at'] = now
         course_data['updated_at'] = now
 

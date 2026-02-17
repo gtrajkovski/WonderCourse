@@ -5,7 +5,7 @@ and automatic version limit enforcement.
 """
 
 from dataclasses import dataclass, field, asdict
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Dict
 import secrets
 
@@ -106,7 +106,7 @@ class VersionStore:
             name=name,
             activity_id=activity_id,
             content=content,
-            created_at=datetime.utcnow().isoformat() + "Z",
+            created_at=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             created_by=user_id
         )
 
